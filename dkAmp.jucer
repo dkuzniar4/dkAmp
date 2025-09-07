@@ -6,8 +6,8 @@
   <MAINGROUP id="kj6Jvx" name="dkAmp">
     <GROUP id="{E2F1262E-1869-83D1-5A20-E8BC03BD7581}" name="Assets">
       <FILE id="QxF6FU" name="dkAmp.png" compile="0" resource="1" file="Assets/dkAmp.png"/>
-      <FILE id="vZXSW2" name="Bypass.png" compile="0" resource="1" file="../../C++/BeginnerBookAudioProgramming/Resources/Bypass.png"/>
-      <FILE id="ezCMn7" name="Lato-Medium.ttf" compile="0" resource="1" file="../../C++/BeginnerBookAudioProgramming/Resources/Lato-Medium.ttf"/>
+      <FILE id="SrvUkR" name="Bypass.png" compile="0" resource="1" file="Assets/Bypass.png"/>
+      <FILE id="DUc9nN" name="Lato-Medium.ttf" compile="0" resource="1" file="Assets/Lato-Medium.ttf"/>
       <FILE id="hkNd1z" name="dkLogo.png" compile="0" resource="1" file="Assets/dkLogo.png"/>
     </GROUP>
     <GROUP id="{0C9F0D86-D811-C251-2FD9-A1D0C3BE4FC3}" name="Source">
