@@ -52,6 +52,7 @@ public:
     void setFFTSize(uint32_t fftSize);
     void prepare(const float* h, uint32_t h_len);
     float process(float input);
+    void setBypass(bool state);
     uint32_t calculateFFTWindow(uint32_t length);
 
 private:
@@ -59,6 +60,7 @@ private:
 
     float** h_fft_Re;
     float** h_fft_Im;
+    std::vector<float> h_norm;
     float* inputBufferRe;    // Input samples buffer
     float* inputBufferIm;
     float* inputBuffer;
@@ -72,6 +74,7 @@ private:
     uint32_t fftSizeHalf = 0;
     uint32_t IR_len = 0;
     uint32_t numSegments;
+    bool bypass = false;
 };
 
 class Convolver
@@ -82,6 +85,7 @@ public:
     void loadIR(const juce::File& file);
     void setSampleRate(uint32_t sampleRate);
     uint32_t getSampleRate(void);
+    void setEnable(bool enable);
 
     bool IR_loaded;
     uint32_t IR_len;
@@ -91,6 +95,7 @@ private:
     FIR_FFT_OLS fir_fft_ols;
     FFT fft;
     uint32_t sampleRate;
+    bool enable = false;
 
     const float* IR_ptr;
 };

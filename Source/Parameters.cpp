@@ -136,8 +136,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
     layout.add(std::make_unique<juce::AudioParameterBool>(
         bypassParamID, "Bypass", false));
 
-    //layout.add(std::make_unique<juce::File>(
-    //    IRParamID, "IRFile", false));
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        cabEnableParamID, "cabEnable", false));
 
     return layout;
 }

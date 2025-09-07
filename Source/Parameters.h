@@ -8,6 +8,7 @@ const juce::ParameterID eqLowParamID{ "eqLow", 1 };
 const juce::ParameterID eqMidParamID{ "eqMid", 1 };
 const juce::ParameterID eqHighParamID{ "eqHigh", 1 };
 const juce::ParameterID bypassParamID{ "bypass", 1 };
+const juce::ParameterID cabEnableParamID{ "cabEnable", 1 };
 
 
 class Parameters
@@ -28,12 +29,13 @@ public:
     float eqMid = 0.0f; // dB
     float eqHigh = 0.0f; // dB
     bool bypassed = false;
-    juce::File IRFile;
-    juce::File IRDir;
+
+    //juce::File IRFile;
+    //juce::File IRDir;
 
     juce::AudioParameterBool* bypassParam;
 
-    juce::File* IRFileParam;
+    //juce::File* IRFileParam;
 
 private:
     juce::AudioParameterFloat* gainParam;

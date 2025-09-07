@@ -30,9 +30,9 @@ namespace Colors
     namespace Button
     {
         const juce::Colour text{ 255, 255, 255 };
-        const juce::Colour textToggled{ 40, 40, 40 };
+        const juce::Colour textToggled{ 0, 0, 0 };
         const juce::Colour background{ 0, 0, 0 };
-        const juce::Colour backgroundToggled{ 255, 250, 245 };
+        const juce::Colour backgroundToggled{ 78, 233, 7 };
         const juce::Colour outline{ 78, 233, 7 };
     }
 

@@ -48,6 +48,23 @@ DkAmpAudioProcessorEditor::DkAmpAudioProcessorEditor (DkAmpAudioProcessor& p)
         };
     fileComboBox.setLookAndFeel(ComboBoxLookAndFeel::get());
 
+    cabEnableButton.setButtonText("Enable");
+    cabEnableButton.setClickingTogglesState(true);
+    cabEnableButton.setLookAndFeel(ButtonLookAndFeel::get());
+    cabEnableButton.onClick = [this]()
+        {
+            if (cabEnableButton.getToggleState())
+            {
+                audioProcessor.cabSim[0].setEnable(true);
+                audioProcessor.cabSim[1].setEnable(true);
+            }
+            else
+            {
+                audioProcessor.cabSim[0].setEnable(false);
+                audioProcessor.cabSim[1].setEnable(false);
+            }
+        };
+
     cabGroup.addAndMakeVisible(loadButton);
     cabGroup.addChildComponent(loadButton);
     cabGroup.addAndMakeVisible(previousButton);
@@ -56,6 +73,8 @@ DkAmpAudioProcessorEditor::DkAmpAudioProcessorEditor (DkAmpAudioProcessor& p)
     cabGroup.addChildComponent(nextButton);
     cabGroup.addAndMakeVisible(fileComboBox);
     cabGroup.addChildComponent(fileComboBox);
+    cabGroup.addAndMakeVisible(cabEnableButton);
+    cabGroup.addChildComponent(cabEnableButton);
     addAndMakeVisible(cabGroup);
 
     addAndMakeVisible(gainKnob);
@@ -141,6 +160,8 @@ void DkAmpAudioProcessorEditor::resized()
     auto comboBoxWidth = eqWidth - 2 * ((eqWidth * 0.20) - (0.5 * buttonWidth));
 
     fileComboBox.setBounds((eqWidth * 0.20) - (buttonWidth / 2), buttonHeight + 25 + 10, comboBoxWidth, buttonHeight);
+
+    cabEnableButton.setBounds((eqWidth * 0.20) - (buttonWidth / 2), buttonHeight + 25 + 20 + buttonHeight, comboBoxWidth, buttonHeight);
 }
 
 void DkAmpAudioProcessorEditor::loadIRFile()

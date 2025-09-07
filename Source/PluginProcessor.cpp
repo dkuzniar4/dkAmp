@@ -99,6 +99,22 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
     eq[0].initialise(sampleRate, 200.0f, 1000.0f, 8000.0f);
     eq[1].initialise(sampleRate, 200.0f, 1000.0f, 8000.0f);
+
+    auto filePath = apvts.state.getProperty("IR_file").toString();
+    juce::File file(filePath);
+
+    auto* cabEnableParam = apvts.getRawParameterValue(cabEnableParamID.getParamID());;
+
+    bool cabEnabled = (cabEnableParam->load() > 0.5f);
+
+    cabSim[0].setEnable(cabEnabled);
+    cabSim[1].setEnable(cabEnabled);
+
+    if (file.existsAsFile())
+    {
+        cabSim[0].loadIR(file);
+        cabSim[1].loadIR(file);
+    }
 }
 
 void DkAmpAudioProcessor::releaseResources()

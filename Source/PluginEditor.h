@@ -50,6 +50,11 @@ private:
     juce::TextButton loadButton;
     juce::TextButton previousButton;
     juce::TextButton nextButton;
+    juce::TextButton cabEnableButton;
+
+    juce::AudioProcessorValueTreeState::ButtonAttachment cabEnableAttachment{
+        audioProcessor.apvts, cabEnableParamID.getParamID(), cabEnableButton
+    };
 
     juce::ComboBox fileComboBox;
     std::unique_ptr<juce::FileChooser> chooser;
