@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="qTjag6" name="dkAmp" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyWebsite="www.dkuzniar.pl"
+              companyName="dkuzniar" pluginAAXCategory="8192">
+  <MAINGROUP id="kj6Jvx" name="dkAmp">
+    <GROUP id="{E2F1262E-1869-83D1-5A20-E8BC03BD7581}" name="Assets">
+      <FILE id="QxF6FU" name="dkAmp.png" compile="0" resource="1" file="Assets/dkAmp.png"/>
+      <FILE id="vZXSW2" name="Bypass.png" compile="0" resource="1" file="../../C++/BeginnerBookAudioProgramming/Resources/Bypass.png"/>
+      <FILE id="ezCMn7" name="Lato-Medium.ttf" compile="0" resource="1" file="../../C++/BeginnerBookAudioProgramming/Resources/Lato-Medium.ttf"/>
+      <FILE id="hkNd1z" name="dkLogo.png" compile="0" resource="1" file="Assets/dkLogo.png"/>
+    </GROUP>
+    <GROUP id="{0C9F0D86-D811-C251-2FD9-A1D0C3BE4FC3}" name="Source">
+      <FILE id="GusAQM" name="CabSim.cpp" compile="1" resource="0" file="Source/CabSim.cpp"/>
+      <FILE id="mHXl2z" name="CabSim.h" compile="0" resource="0" file="Source/CabSim.h"/>
+      <FILE id="BjZBKG" name="ParamEq.cpp" compile="1" resource="0" file="Source/ParamEq.cpp"/>
+      <FILE id="DQURRJ" name="ParamEq.h" compile="0" resource="0" file="Source/ParamEq.h"/>
+      <FILE id="sFSUwK" name="Preamp.cpp" compile="1" resource="0" file="Source/Preamp.cpp"/>
+      <FILE id="sd4xAO" name="Preamp.h" compile="0" resource="0" file="Source/Preamp.h"/>
+      <FILE id="uJi5E1" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="m2q4XO" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="F30wHt" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="Yax213" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="Bj9WuS" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
+      <FILE id="eAOfS6" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
+      <FILE id="JJbkxw" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
+      <FILE id="cfI8js" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
+      <FILE id="veWYot" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
+      <FILE id="pxSLSA" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="dkAmp"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="dkAmp"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../repos/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../repos/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>
