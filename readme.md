@@ -10,7 +10,5 @@ dkAmp is a guitar amp simulator consist of:
 
 
 
-```markdown
-![alt](<Docs/Images/dkAmpGUI.png>)
-```
+![Alt text](Docs/Images/dkAmpGUI.png)
 
