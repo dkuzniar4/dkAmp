@@ -177,9 +177,6 @@ uint32_t FFT::calculateFFTWindow(uint32_t length)
 }
 
 FIR_FFT_OLS::FIR_FFT_OLS()
-    : fftSize(0), IR_len(0), bufferIndex(0), outputBufferIndex(0), numSegments(0),
-    inputBufferRe(nullptr), inputBufferIm(nullptr), inputBuffer(nullptr), overlapBuffer(nullptr), outputBuffer(nullptr),
-    h_fft_Re(nullptr), h_fft_Im(nullptr)
 {
 
 }
@@ -191,6 +188,9 @@ FIR_FFT_OLS::~FIR_FFT_OLS()
     delete[] inputBuffer;
     delete[] overlapBuffer;
     delete[] outputBuffer;
+    delete[] h_norm;
+    delete[] mulBufferRe;
+    delete[] mulBufferIm;
 
     if (h_fft_Re)
     {
@@ -210,58 +210,51 @@ void FIR_FFT_OLS::setFFTSize(uint32_t size)
     fftSizeHalf = fftSize / 2;
 
     // to do
-    //if(inputBufferRe != nullptr)
-        //delete[] inputBufferRe;
+    if(inputBufferRe != nullptr)
+        delete[] inputBufferRe;
 
-    inputBufferRe = nullptr;
     inputBufferRe = new float[fftSize];
     std::memset(inputBufferRe, 0, fftSize * sizeof(float));
 
     // to do
-    //if(inputBufferIm != nullptr)
-        //delete[] inputBufferIm;
+    if(inputBufferIm != nullptr)
+        delete[] inputBufferIm;
 
-    inputBufferIm = nullptr;
     inputBufferIm = new float[fftSize];
     std::memset(inputBufferIm, 0, fftSize * sizeof(float));
 
     // to do
-    //if(inputBuffer != nullptr)
-        //delete[] inputBuffer;
+    if(inputBuffer != nullptr)
+        delete[] inputBuffer;
 
-    inputBuffer = nullptr;
     inputBuffer = new float[fftSizeHalf];
     std::memset(inputBuffer, 0, fftSizeHalf * sizeof(float));
 
     // to do
-    //if(mulBufferRe != nullptr)
-        //delete[] mulBufferRe;
+    if(mulBufferRe != nullptr)
+        delete[] mulBufferRe;
 
-    mulBufferRe = nullptr;
     mulBufferRe = new float[fftSize];
     std::memset(mulBufferRe, 0, fftSize * sizeof(float));
 
     // to do
-    //if(mulBufferIm != nullptr)
-        //delete[] mulBufferIm;
+    if(mulBufferIm != nullptr)
+        delete[] mulBufferIm;
 
-    mulBufferIm = nullptr;
     mulBufferIm = new float[fftSize];
     std::memset(mulBufferIm, 0, fftSize * sizeof(float));
 
     // to do
-    //if(overlapBuffer != nullptr)
-        //delete[] overlapBuffer;
+    if(overlapBuffer != nullptr)
+        delete[] overlapBuffer;
 
-    overlapBuffer = nullptr;
     overlapBuffer = new float[fftSizeHalf];
     std::memset(overlapBuffer, 0, fftSizeHalf * sizeof(float));
 
     // to do
-    //if(outputBuffer != nullptr)
-        //delete[] outputBuffer;
+    if(outputBuffer != nullptr)
+        delete[] outputBuffer;
 
-    outputBuffer = nullptr;
     outputBuffer = new float[fftSizeHalf];
     std::memset(outputBuffer, 0, fftSizeHalf * sizeof(float));
 }
@@ -276,7 +269,10 @@ void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
     IR_len = h_len;
     numSegments = ceil(((float)(IR_len)) / ((float)(fftSizeHalf)));
 
-    h_norm.resize(IR_len);
+    if (h_norm != nullptr)
+        delete[] h_norm;
+
+    h_norm = new float[IR_len];
 
     // normalise h
     float L1 = 0.0f;

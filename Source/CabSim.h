@@ -58,22 +58,22 @@ public:
 private:
     FFT fft;
 
-    float** h_fft_Re;
-    float** h_fft_Im;
-    std::vector<float> h_norm;
-    float* inputBufferRe;    // Input samples buffer
-    float* inputBufferIm;
-    float* inputBuffer;
-    float* overlapBuffer; // Overlap buffer for OLA
-    float* outputBuffer;   // Output samples buffer
-    float* mulBufferRe;
-    float* mulBufferIm;
+    float** h_fft_Re = nullptr;
+    float** h_fft_Im = nullptr;
+    float* h_norm = nullptr;
+    float* inputBufferRe = nullptr;    // Input samples buffer
+    float* inputBufferIm = nullptr;
+    float* inputBuffer = nullptr;
+    float* overlapBuffer = nullptr; // Overlap buffer for OLA
+    float* outputBuffer = nullptr;   // Output samples buffer
+    float* mulBufferRe = nullptr;
+    float* mulBufferIm = nullptr;
     uint32_t bufferIndex = 0;
     uint32_t outputBufferIndex = 0;
     uint32_t fftSize = 0;
     uint32_t fftSizeHalf = 0;
     uint32_t IR_len = 0;
-    uint32_t numSegments;
+    uint32_t numSegments = 0;
     bool bypass = false;
 };
 
