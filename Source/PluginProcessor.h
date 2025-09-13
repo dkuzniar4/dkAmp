@@ -11,7 +11,7 @@
 #include <JuceHeader.h>
 #include "Parameters.h"
 #include "Preamp.h"
-#include "Transient.h"
+#include "Nonlinear.h"
 #include "ParamEq.h"
 #include "CabSim.h"
 

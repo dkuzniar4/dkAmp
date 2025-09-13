@@ -1,14 +1,14 @@
 /*
   ==============================================================================
 
-    Transient.cpp
+    Nonlinear.cpp
     Created: 13 Sep 2025 7:40:12pm
     Author:  dkuzn
 
   ==============================================================================
 */
 
-#include "Transient.h"
+#include "Nonlinear.h"
 
 
 #ifndef M_PI
@@ -24,24 +24,22 @@ void NonlinearProcessor::load(float* tab)
     tran = tab;
 }
 
-void NonlinearProcessor::init(uint32_t ampSteps,
-    float freq_1, float freq_2, float freq_3,
-    float sampleRate)
+void NonlinearProcessor::init(uint32_t ampSteps, float freq_1, float freq_2, float sampleRate)
 {
     this->ampSteps = ampSteps;
     this->sampleRate = sampleRate;
 
     // Filters for crossovers
-    designLowpass(200.0f, sampleRate, low_lp1);
-    designLowpass(200.0f, sampleRate, low_lp2);
+    designLowpass(freq_1, sampleRate, low_lp1);
+    designLowpass(freq_1, sampleRate, low_lp2);
 
-    designHighpass(200.0f, sampleRate, mid_hp1);
-    designHighpass(200.0f, sampleRate, mid_hp2);
-    designLowpass(8000.0f, sampleRate, mid_lp1);
-    designLowpass(8000.0f, sampleRate, mid_lp2);
+    designHighpass(freq_1, sampleRate, mid_hp1);
+    designHighpass(freq_1, sampleRate, mid_hp2);
+    designLowpass(freq_2, sampleRate, mid_lp1);
+    designLowpass(freq_2, sampleRate, mid_lp2);
 
-    designHighpass(8000.0f, sampleRate, high_hp1);
-    designHighpass(8000.0f, sampleRate, high_hp2);
+    designHighpass(freq_2, sampleRate, high_hp1);
+    designHighpass(freq_2, sampleRate, high_hp2);
 }
 
 float NonlinearProcessor::process(float input)

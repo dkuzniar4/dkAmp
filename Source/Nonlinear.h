@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    Transient.h
+    Nonlinear.h
     Created: 13 Sep 2025 7:40:12pm
     Author:  dkuzn
 
@@ -13,6 +13,15 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+
+// first band : 0 - FREQ_1
+// second band: FREQ_1 - FREQ_2
+// third band:  FREQ_2 - NYQUIST
+#define FREQ_1 300.0f
+#define FREQ_2 3000.0f
+
+// test tones was: 200 Hz, 1kHz, 8kHz
+
 
 // Simple biquad
 struct SimpleBiquad
@@ -40,9 +49,7 @@ public:
     void load(float* tab);
 
     // Init processor
-    void init(uint32_t ampSteps,
-        float freq_1, float freq_2, float freq_3,
-        float sampleRate);
+    void init(uint32_t ampSteps, float freq_1, float freq_2, float sampleRate);
 
     // Process data
     float process(float input);

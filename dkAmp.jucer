@@ -12,8 +12,8 @@
     </GROUP>
     <GROUP id="{0C9F0D86-D811-C251-2FD9-A1D0C3BE4FC3}" name="Source">
       <FILE id="fouOUb" name="ampProfiles.h" compile="0" resource="0" file="Source/ampProfiles.h"/>
-      <FILE id="AlgjSP" name="Transient.cpp" compile="1" resource="0" file="Source/Transient.cpp"/>
-      <FILE id="nMOdZb" name="Transient.h" compile="0" resource="0" file="Source/Transient.h"/>
+      <FILE id="AlgjSP" name="Nonlinear.cpp" compile="1" resource="0" file="Source/Nonlinear.cpp"/>
+      <FILE id="nMOdZb" name="Nonlinear.h" compile="0" resource="0" file="Source/Nonlinear.h"/>
       <FILE id="HSYdvn" name="FFT.cpp" compile="1" resource="0" file="Source/FFT.cpp"/>
       <FILE id="GohJWx" name="FFT.h" compile="0" resource="0" file="Source/FFT.h"/>
       <FILE id="GusAQM" name="CabSim.cpp" compile="1" resource="0" file="Source/CabSim.cpp"/>

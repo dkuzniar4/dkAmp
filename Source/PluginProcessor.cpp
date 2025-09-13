@@ -119,11 +119,11 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
     //tran[0].load(&dkAmpProfile[0][0]);
     tran[0].load(&_57customChamp[0][0]);
-    tran[0].init(100, 200.0f, 1000.0f, 8000.0f, sampleRate);
+    tran[0].init(100, FREQ_1, FREQ_2, sampleRate);
 
     //tran[1].load(&dkAmpProfile[0][0]);
     tran[1].load(&_57customChamp[0][0]);
-    tran[1].init(100, 200.0f, 1000.0f, 8000.0f, sampleRate);
+    tran[1].init(100, FREQ_1, FREQ_2, sampleRate);
 }
 
 void DkAmpAudioProcessor::releaseResources()
