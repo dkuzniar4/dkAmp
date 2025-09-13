@@ -1,4 +1,5 @@
 To do list:
 
 1. CabSim and eq volume normalisation
+2. Maybe add limiter/compressor on output
 2. Problem on Mac in MainStage (nod valid plugin, and irFile probably isn't stored )
