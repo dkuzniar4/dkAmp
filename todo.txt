@@ -1,0 +1,4 @@
+To do list:
+
+1. CabSim and eq normalisation
+2. Problem on Mac in MainStage (nod valid plugin, and irFile probably isn't stored )

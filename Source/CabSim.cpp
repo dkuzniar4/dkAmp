@@ -70,49 +70,42 @@ void FIR_FFT_OLS::setFFTSize(uint32_t size)
     fftSize = size;
     fftSizeHalf = fftSize / 2;
 
-    // to do
     if(inputBufferRe != nullptr)
         delete[] inputBufferRe;
 
     inputBufferRe = new float[fftSize];
     std::memset(inputBufferRe, 0, fftSize * sizeof(float));
 
-    // to do
     if(inputBufferIm != nullptr)
         delete[] inputBufferIm;
 
     inputBufferIm = new float[fftSize];
     std::memset(inputBufferIm, 0, fftSize * sizeof(float));
 
-    // to do
     if(inputBuffer != nullptr)
         delete[] inputBuffer;
 
     inputBuffer = new float[fftSizeHalf];
     std::memset(inputBuffer, 0, fftSizeHalf * sizeof(float));
 
-    // to do
     if(mulBufferRe != nullptr)
         delete[] mulBufferRe;
 
     mulBufferRe = new float[fftSize];
     std::memset(mulBufferRe, 0, fftSize * sizeof(float));
 
-    // to do
     if(mulBufferIm != nullptr)
         delete[] mulBufferIm;
 
     mulBufferIm = new float[fftSize];
     std::memset(mulBufferIm, 0, fftSize * sizeof(float));
 
-    // to do
     if(overlapBuffer != nullptr)
         delete[] overlapBuffer;
 
     overlapBuffer = new float[fftSizeHalf];
     std::memset(overlapBuffer, 0, fftSizeHalf * sizeof(float));
 
-    // to do
     if(outputBuffer != nullptr)
         delete[] outputBuffer;
 
@@ -168,12 +161,12 @@ void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
         std::memset(h_fft_Re[i], 0, fftSize * sizeof(float));
         std::memset(h_fft_Im[i], 0, fftSize * sizeof(float));
 
-        // Kopiowanie segmentu IR do bufora FFT
+        // Copying IR segment to FFT buffer
         uint32_t startIdx = i * (fftSizeHalf);
         uint32_t copyLength = std::min(h_len - startIdx, fftSizeHalf);
         std::memcpy(h_fft_Re[i], &h_norm[startIdx], copyLength * sizeof(float));
 
-        // FFT na segmencie
+        // FFT on segment
         fft.FFT_process(h_fft_Re[i], h_fft_Im[i], fftSize);
     }
 }
@@ -196,25 +189,25 @@ float FIR_FFT_OLS::process(float input)
     }
     else
     {
-        // Dodaj próbkê do bufora wejœciowego
+        // Add sample to input buffer
         inputBufferRe[bufferIndex + fftSizeHalf] = input;
         inputBuffer[bufferIndex] = input;
         bufferIndex++;
 
-        // SprawdŸ, czy bufor wejœciowy jest pe³ny
+        // Check if input buffer is full
         if (bufferIndex >= fftSizeHalf)
         {
-            // Przygotuj dane wejœciowe z overlap
+            // Prepare input data with overlap
             std::memcpy(inputBufferRe, overlapBuffer, fftSizeHalf * sizeof(float));
 
-            // Wykonaj FFT
+            // FFT
             fft.FFT_process(inputBufferRe, inputBufferIm, fftSize);
 
-            // Wyczyœæ mulBufferRe i mulBufferIm
+            // Clear mulBufferRe and mulBufferIm
             std::memset(mulBufferRe, 0, fftSize * sizeof(float));
             std::memset(mulBufferIm, 0, fftSize * sizeof(float));
 
-            // Sumowanie segmentów IR
+            // Sum IR segments
             for (uint32_t seg = 0; seg < numSegments; seg++)
             {
                 for (uint32_t i = 0; i < fftSize; i++)
@@ -229,10 +222,10 @@ float FIR_FFT_OLS::process(float input)
             // IFFT
             fft.IFFT_process(mulBufferRe, mulBufferIm, fftSize);
 
-            // Aktualizacja overlap
+            // overlap update
             std::memcpy(overlapBuffer, inputBuffer, fftSizeHalf * sizeof(float));
 
-            // Zapis wyniku do bufora wyjœciowego
+            // Store output to output buffer
             std::memcpy(outputBuffer, &mulBufferRe[fftSizeHalf], fftSizeHalf * sizeof(float));
 
             // Clean buffer

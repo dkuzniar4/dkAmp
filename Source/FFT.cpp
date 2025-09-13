@@ -106,7 +106,7 @@ void FFT::IFFT_process(float* Re, float* Im, uint32_t size)
 void FFT::rectangularToPolar(float* Re, float* Im, float* Mag, float* Phase, uint32_t size)
 {
     if (!Re || !Im || !Mag || !Phase) {
-        return; // Sprawdzanie wskaŸników na null
+        return; // Check if nullptr
     }
 
     for (uint32_t i = 0u; i < size; i++)
@@ -134,7 +134,7 @@ void FFT::rectangularToPolar(float* Re, float* Im, float* Mag, float* Phase, uin
 void FFT::polarToRectangular(float* Mag, float* Phase, float* Re, float* Im, uint32_t size)
 {
     if (!Mag || !Phase || !Re || !Im) {
-        return; // Sprawdzanie wskaŸników na null
+        return; // Check if nullptr
     }
 
     for (uint32_t i = 0; i < size; i++)

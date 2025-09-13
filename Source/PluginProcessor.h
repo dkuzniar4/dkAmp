@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "Parameters.h"
 #include "Preamp.h"
+#include "Transient.h"
 #include "ParamEq.h"
 #include "CabSim.h"
 
@@ -68,6 +69,8 @@ public:
 
 private:
     SimpleEQ eq[2];
+
+    NonlinearProcessor tran[2];
 
     float lastEqLow = 0.0f;
     float lastEqMid = 0.0f;

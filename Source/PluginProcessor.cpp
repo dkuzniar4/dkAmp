@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "ampProfiles.h"
 
 //==============================================================================
 DkAmpAudioProcessor::DkAmpAudioProcessor()
@@ -115,6 +116,14 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
         cabSim[0].loadIR(file);
         cabSim[1].loadIR(file);
     }
+
+    //tran[0].load(&dkAmpProfile[0][0]);
+    tran[0].load(&_57customChamp[0][0]);
+    tran[0].init(100, 200.0f, 1000.0f, 8000.0f, sampleRate);
+
+    //tran[1].load(&dkAmpProfile[0][0]);
+    tran[1].load(&_57customChamp[0][0]);
+    tran[1].init(100, 200.0f, 1000.0f, 8000.0f, sampleRate);
 }
 
 void DkAmpAudioProcessor::releaseResources()
@@ -179,7 +188,11 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             {
                 float signal;
 
-                signal = softClipWaveShaper(input, params.gain);
+                // alternative non-linear function
+                //signal = softClipWaveShaper(input, params.gain);
+
+                // transient non-linear function
+                signal = tran[channel].process(input * (params.gain / 10.0f));
 
                 // to do lastEqLow - is common for both channels !!!
                 if (params.eqLow != lastEqLow)

@@ -81,7 +81,6 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, eqMidParamID, eqMidParam);
     castParameter(apvts, eqHighParamID, eqHighParam);
     castParameter(apvts, bypassParamID, bypassParam);
-    //castParameter(apvts, IRParamID, IRFileParam);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -179,9 +178,6 @@ void Parameters::update() noexcept
     eqHighSmoother.setTargetValue(eqHighParam->get());
 
     bypassed = bypassParam->get();
-
-    //IRFile = IRFileParam->getFileName();
-    //IRDir = IRFileParam->getCurrentWorkingDirectory();
 }
 
 void Parameters::smoothen() noexcept
