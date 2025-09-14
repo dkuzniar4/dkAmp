@@ -163,8 +163,8 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
     params.update();
     
-    cabSim[0].setEnable(params.cabEnable);
-    cabSim[1].setEnable(params.cabEnable);
+    cabSim[0].setEnable(params.cabEnabled);
+    cabSim[1].setEnable(params.cabEnabled);
 
     for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
     {
@@ -184,7 +184,7 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
                 // alternative non-linear function
                 //signal = softClipWaveShaper(input, params.gain);
 
-                // transient non-linear function
+                // transistion non-linear function
                 signal = tran[channel].process(input * (params.gain / 10.0f));
 
                 // to do lastEqLow - is common for both channels !!!

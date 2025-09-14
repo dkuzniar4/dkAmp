@@ -29,7 +29,7 @@ public:
     float eqMid = 0.0f; // dB
     float eqHigh = 0.0f; // dB
     bool bypassed = false;
-    bool cabEnable = false;
+    bool cabEnabled = false;
 
 
     juce::AudioParameterBool* bypassParam;

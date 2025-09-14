@@ -51,19 +51,6 @@ DkAmpAudioProcessorEditor::DkAmpAudioProcessorEditor (DkAmpAudioProcessor& p)
     cabEnableButton.setButtonText("Enable");
     cabEnableButton.setClickingTogglesState(true);
     cabEnableButton.setLookAndFeel(ButtonLookAndFeel::get());
-//    cabEnableButton.onClick = [this]()
-//        {
-//            if (cabEnableButton.getToggleState())
-//            {
-//                audioProcessor.cabSim[0].setEnable(true);
-//                audioProcessor.cabSim[1].setEnable(true);
-//            }
-//            else
-//            {
-//                audioProcessor.cabSim[0].setEnable(false);
-//                audioProcessor.cabSim[1].setEnable(false);
-//            }
-//        };
 
     cabGroup.addAndMakeVisible(loadButton);
     cabGroup.addChildComponent(loadButton);
@@ -103,6 +90,11 @@ DkAmpAudioProcessorEditor::DkAmpAudioProcessorEditor (DkAmpAudioProcessor& p)
 DkAmpAudioProcessorEditor::~DkAmpAudioProcessorEditor()
 {
     setLookAndFeel(nullptr);
+    cabEnableButton.setLookAndFeel(nullptr);
+    loadButton.setLookAndFeel(nullptr);
+    previousButton.setLookAndFeel(nullptr);
+    nextButton.setLookAndFeel(nullptr);
+    cabEnableButton.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
