@@ -42,15 +42,14 @@ private:
     RotaryKnob eqHighKnob{ "High", audioProcessor.apvts, eqHighParamID, 70, true };
 
     juce::ImageButton bypassButton;
-
-    juce::AudioProcessorValueTreeState::ButtonAttachment bypassAttachment{
-        audioProcessor.apvts, bypassParamID.getParamID(), bypassButton
-    };
-
     juce::TextButton loadButton;
     juce::TextButton previousButton;
     juce::TextButton nextButton;
     juce::TextButton cabEnableButton;
+
+    juce::AudioProcessorValueTreeState::ButtonAttachment bypassAttachment{
+        audioProcessor.apvts, bypassParamID.getParamID(), bypassButton
+    };
 
     juce::AudioProcessorValueTreeState::ButtonAttachment cabEnableAttachment{
         audioProcessor.apvts, cabEnableParamID.getParamID(), cabEnableButton
