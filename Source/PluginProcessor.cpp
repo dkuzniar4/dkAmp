@@ -97,6 +97,7 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     params.prepareToPlay(sampleRate);
     params.reset();
+    params.update();
 
     eq[0].initialise(sampleRate, 200.0f, 1000.0f, 8000.0f);
     eq[1].initialise(sampleRate, 200.0f, 1000.0f, 8000.0f);
@@ -104,12 +105,6 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     auto filePath = apvts.state.getProperty("IR_file").toString();
     juce::File file(filePath);
 
-    auto* cabEnableParam = apvts.getRawParameterValue(cabEnableParamID.getParamID());;
-
-    bool cabEnabled = (cabEnableParam->load() > 0.5f);
-
-    cabSim[0].setEnable(cabEnabled);
-    cabSim[1].setEnable(cabEnabled);
 
     if (file.existsAsFile())
     {
@@ -145,6 +140,7 @@ bool DkAmpAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
 
     if (mainIn == mono && mainOut == mono) { return true; }
     if (mainIn == mono && mainOut == stereo) { return true; }
+    if (mainIn == stereo && mainOut == stereo) { return true; }
 
     return false;
 }
@@ -166,17 +162,14 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
         buffer.clear (i, 0, buffer.getNumSamples());
 
     params.update();
-
-    auto mainOutput = getBusBuffer(buffer, false, 0);
-    auto mainOutputChannels = mainOutput.getNumChannels();
-    auto isMainOutputStereo = mainOutputChannels > 1;
-    float* outputDataL = mainOutput.getWritePointer(0);
-    float* outputDataR = mainOutput.getWritePointer(isMainOutputStereo ? 1 : 0);
+    
+    cabSim[0].setEnable(params.cabEnable);
+    cabSim[1].setEnable(params.cabEnable);
 
     for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
     {
         const float* inputData = buffer.getReadPointer(channel);
-        float* outputData = mainOutput.getWritePointer(channel);
+        float* outputData = buffer.getWritePointer(channel);
 
         for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
         {

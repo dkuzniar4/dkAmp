@@ -239,7 +239,7 @@ float FIR_FFT_OLS::process(float input)
     }
 }
 
-Convolver::Convolver() : IR_len(0), IR_loaded(false), IR_ptr(nullptr)
+Convolver::Convolver()
 {
 }
 

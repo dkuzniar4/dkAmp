@@ -81,6 +81,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, eqMidParamID, eqMidParam);
     castParameter(apvts, eqHighParamID, eqHighParam);
     castParameter(apvts, bypassParamID, bypassParam);
+    castParameter(apvts, cabEnableParamID, cabEnableParam);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterLayout()
@@ -136,7 +137,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
         bypassParamID, "Bypass", false));
 
     layout.add(std::make_unique<juce::AudioParameterBool>(
-        cabEnableParamID, "cabEnable", false));
+        cabEnableParamID, "Cab Enable", false));
 
     return layout;
 }
@@ -178,6 +179,7 @@ void Parameters::update() noexcept
     eqHighSmoother.setTargetValue(eqHighParam->get());
 
     bypassed = bypassParam->get();
+    cabEnable = cabEnableParam->get();
 }
 
 void Parameters::smoothen() noexcept

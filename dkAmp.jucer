@@ -2,7 +2,8 @@
 
 <JUCERPROJECT id="qTjag6" name="dkAmp" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyWebsite="www.dkuzniar.pl"
-              companyName="dkuzniar" pluginAAXCategory="8192">
+              companyName="dkuzniar" pluginAAXCategory="8192" pluginManufacturerCode="Amp1"
+              version="1.0.1">
   <MAINGROUP id="kj6Jvx" name="dkAmp">
     <GROUP id="{E2F1262E-1869-83D1-5A20-E8BC03BD7581}" name="Assets">
       <FILE id="QxF6FU" name="dkAmp.png" compile="0" resource="1" file="Assets/dkAmp.png"/>
