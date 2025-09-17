@@ -2,4 +2,4 @@ To do list:
 
 1. CabSim and eq volume normalisation
 2. Maybe add limiter/compressor on output
-2. Problem on Mac in MainStage and GarageBand not in Reaper: bool cabEnabled not stored in apvts
+2. Problem on Mac in MainStage and GarageBand not in Reaper: MainStage probably not calling PrepareToPlay()

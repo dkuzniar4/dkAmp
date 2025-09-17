@@ -39,7 +39,6 @@ public:
     void setFFTSize(uint32_t fftSize);
     void prepare(const float* h, uint32_t h_len);
     float process(float input);
-    void setBypass(bool state);
     uint32_t calculateFFTWindow(uint32_t length);
 
 private:
@@ -61,7 +60,6 @@ private:
     uint32_t fftSizeHalf = 0;
     uint32_t IR_len = 0;
     uint32_t numSegments = 0;
-    bool bypass = false;
 };
 
 class Convolver

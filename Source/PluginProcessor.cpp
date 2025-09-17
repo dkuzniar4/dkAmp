@@ -101,15 +101,18 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
     eq[0].initialise(sampleRate, 200.0f, 1000.0f, 8000.0f);
     eq[1].initialise(sampleRate, 200.0f, 1000.0f, 8000.0f);
-
+    
     auto filePath = apvts.state.getProperty("IR_file").toString();
-    juce::File file(filePath);
 
-
-    if (file.existsAsFile())
+    if (filePath.isNotEmpty())
     {
-        cabSim[0].loadIR(file);
-        cabSim[1].loadIR(file);
+        juce::File file(filePath);
+        
+        if (file.existsAsFile())
+        {
+            cabSim[0].loadIR(file);
+            cabSim[1].loadIR(file);
+        }
     }
 
     //tran[0].load(&dkAmpProfile[0][0]);
@@ -151,6 +154,7 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
