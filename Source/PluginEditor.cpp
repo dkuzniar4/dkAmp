@@ -238,10 +238,6 @@ void DkAmpAudioProcessorEditor::restoreIRFile()
 
             // ustaw zaznaczenie na zapamiêtanym pliku
             fileComboBox.setText(file.getFileName(), juce::dontSendNotification);
-
-            // Za³aduj do cabSim
-            audioProcessor.cabSim[0].loadIR(file);
-            audioProcessor.cabSim[1].loadIR(file);
         }
     }
 }
