@@ -24,10 +24,27 @@ DkAmpAudioProcessor::DkAmpAudioProcessor()
 #endif
     , params(apvts)
 {
+#if LOGGER_ENABLE
+    auto logFile = juce::File::getSpecialLocation((juce::File::userHomeDirectory))
+        .getChildFile("myLogs.txt");
+
+
+            logger.reset(juce::FileLogger::createDefaultAppLogger(
+                logFile.getParentDirectory().getFullPathName(),
+                logFile.getFileName(),
+                "==== Start Plugin Log ===="));
+
+            juce::Logger::setCurrentLogger(logger.get());
+#endif
 }
 
 DkAmpAudioProcessor::~DkAmpAudioProcessor()
 {
+#if LOGGER_ENABLE
+    juce::Logger::writeToLog("Plugin closing...");
+    juce::Logger::setCurrentLogger(nullptr);
+    logger = nullptr;
+#endif
 }
 
 //==============================================================================
@@ -95,6 +112,9 @@ void DkAmpAudioProcessor::changeProgramName (int index, const juce::String& newN
 //==============================================================================
 void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    this->sampleRate = sampleRate;
+    this->samplesPerBlock = samplesPerBlock;
+
     params.prepareToPlay(sampleRate);
     params.reset();
     params.update();
@@ -249,6 +269,8 @@ void DkAmpAudioProcessor::setStateInformation (const void* data, int sizeInBytes
     if (xml.get() != nullptr && xml->hasTagName(apvts.state.getType())) {
         apvts.replaceState(juce::ValueTree::fromXml(*xml));
     }
+    
+    prepareToPlay(this->sampleRate, this->samplesPerBlock);
 }
 
 //==============================================================================

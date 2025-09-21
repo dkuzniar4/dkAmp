@@ -2,6 +2,8 @@
 
 #include <JuceHeader.h>
 
+#define LOGGER_ENABLE 0u
+
 const juce::ParameterID gainParamID{ "gain", 1 };
 const juce::ParameterID outputParamID{ "output", 1 };
 const juce::ParameterID eqLowParamID{ "eqLow", 1 };

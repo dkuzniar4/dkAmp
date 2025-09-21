@@ -64,10 +64,17 @@ public:
         *this, nullptr, "Parameters", Parameters::createParameterLayout()
     };
 
+#if LOGGER_ENABLE
+    std::unique_ptr<juce::FileLogger> logger;
+#endif
+
     Parameters params;
     Convolver cabSim[2];
 
 private:
+    double sampleRate;
+    int samplesPerBlock;
+
     SimpleEQ eq[2];
 
     NonlinearProcessor tran[2];
