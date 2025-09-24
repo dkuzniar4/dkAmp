@@ -14,6 +14,7 @@
 #include "Nonlinear.h"
 #include "ParamEq.h"
 #include "CabSim.h"
+#include "Compressor.h"
 
 //==============================================================================
 /**
@@ -69,15 +70,17 @@ public:
 #endif
 
     Parameters params;
-    Convolver cabSim[2];
+    Convolver cabSim;
 
 private:
     double sampleRate;
     int samplesPerBlock;
 
-    SimpleEQ eq[2];
+    SimpleEQ eq;
 
-    NonlinearProcessor tran[2];
+    NonlinearProcessor tran;
+
+    Compressor comp;
 
     float lastEqLow = 0.0f;
     float lastEqMid = 0.0f;

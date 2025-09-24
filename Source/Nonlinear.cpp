@@ -55,23 +55,95 @@ float NonlinearProcessor::process(float input)
     float bands[3] = { low, midBand, high };
     float out = 0.0f;
 
-    for (int b = 0; b < 3; b++)
+    float amp;
+    float idx_f;
+    float frac;
+    float g1;
+    float g2;
+    float gain;
+    int idx;
+    int idxNext;
+    int b;
+
+    b = 0;
+    if (enLow)
     {
-        float amp = std::fabs(bands[b]);
+        amp = std::fabs(bands[b]);
 
-        float idx_f = amp * (ampSteps - 1);
-        int idx = std::clamp(static_cast<int>(std::floor(idx_f)), 0, static_cast<int>(ampSteps - 1));
-        int idxNext = std::min(idx + 1, static_cast<int>(ampSteps - 1));
-        float frac = idx_f - idx;
+        idx_f = amp * (ampSteps - 1);
+        idx = std::clamp(static_cast<int>(std::floor(idx_f)), 0, static_cast<int>(ampSteps - 1));
+        idxNext = std::min(idx + 1, static_cast<int>(ampSteps - 1));
+        frac = idx_f - idx;
 
-        float g1 = tran[b * ampSteps + idx];
-        float g2 = tran[b * ampSteps + idxNext];
-        float gain = g1 + frac * (g2 - g1);
+        g1 = tran[b * ampSteps + idx];
+        g2 = tran[b * ampSteps + idxNext];
+        gain = g1 + frac * (g2 - g1);
 
         out += bands[b] * gain;
     }
+    else
+    {
+        out += bands[b];
+    }
+
+    b = 1;
+    if (enMid)
+    {
+        amp = std::fabs(bands[b]);
+
+        idx_f = amp * (ampSteps - 1);
+        idx = std::clamp(static_cast<int>(std::floor(idx_f)), 0, static_cast<int>(ampSteps - 1));
+        idxNext = std::min(idx + 1, static_cast<int>(ampSteps - 1));
+        frac = idx_f - idx;
+
+        g1 = tran[b * ampSteps + idx];
+        g2 = tran[b * ampSteps + idxNext];
+        gain = g1 + frac * (g2 - g1);
+
+        out += bands[b] * gain;
+    }
+    else
+    {
+        out += bands[b];
+    }
+
+    b = 2;
+    if (enHigh)
+    {
+        amp = std::fabs(bands[b]);
+
+        idx_f = amp * (ampSteps - 1);
+        idx = std::clamp(static_cast<int>(std::floor(idx_f)), 0, static_cast<int>(ampSteps - 1));
+        idxNext = std::min(idx + 1, static_cast<int>(ampSteps - 1));
+        frac = idx_f - idx;
+
+        g1 = tran[b * ampSteps + idx];
+        g2 = tran[b * ampSteps + idxNext];
+        gain = g1 + frac * (g2 - g1);
+
+        out += bands[b] * gain;
+    }
+    else
+    {
+        out += bands[b];
+    }
 
     return out;
+}
+
+void NonlinearProcessor::enableLow(bool state)
+{
+    enLow = state;
+}
+
+void NonlinearProcessor::enableMid(bool state)
+{
+    enMid = state;
+}
+
+void NonlinearProcessor::enableHigh(bool state)
+{
+    enHigh = state;
 }
 
 void NonlinearProcessor::reset()

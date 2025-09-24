@@ -82,6 +82,9 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, eqHighParamID, eqHighParam);
     castParameter(apvts, bypassParamID, bypassParam);
     castParameter(apvts, cabEnableParamID, cabEnableParam);
+    castParameter(apvts, lowGainParamID, lowGainParam);
+    castParameter(apvts, midGainParamID, midGainParam);
+    castParameter(apvts, highGainParamID, highGainParam);
     
     update();
 }
@@ -102,7 +105,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         outputParamID,
         "Output gain",
-        juce::NormalisableRange<float> { -12.0f, 12.0f },
+        juce::NormalisableRange<float> { -20.0f, 20.0f },
         0.0f,
         juce::AudioParameterFloatAttributes()
             .withStringFromValueFunction(stringFromDecibels)
@@ -140,6 +143,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
 
     layout.add(std::make_unique<juce::AudioParameterBool>(
         cabEnableParamID, "Cab Enable", false));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        lowGainParamID, "Low gain enable", false));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        midGainParamID, "Mid gain enable", false));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        highGainParamID, "High gain enable", false));
+
 
     return layout;
 }
@@ -182,6 +195,9 @@ void Parameters::update() noexcept
 
     bypassed = bypassParam->get();
     cabEnabled = cabEnableParam->get();
+    lowGain = lowGainParam->get();
+    midGain = midGainParam->get();
+    highGain = highGainParam->get();
 }
 
 void Parameters::smoothen() noexcept

@@ -80,6 +80,42 @@ DkAmpAudioProcessorEditor::DkAmpAudioProcessorEditor (DkAmpAudioProcessor& p)
         0.0f);
     addAndMakeVisible(bypassButton);
 
+    auto lowGainIcon = juce::ImageCache::getFromMemory(BinaryData::lowGain_png,
+        BinaryData::lowGain_pngSize);
+    lowGainButton.setClickingTogglesState(true);
+    lowGainButton.setBounds(0, 0, 30, 30);
+    lowGainButton.setImages(
+        false, true, true,
+        lowGainIcon, 1.0f, juce::Colours::grey,
+        lowGainIcon, 1.0f, juce::Colours::grey,
+        lowGainIcon, 1.0f, juce::Colours::red,
+        0.0f);
+    addAndMakeVisible(lowGainButton);
+
+    auto midGainIcon = juce::ImageCache::getFromMemory(BinaryData::midGain_png,
+        BinaryData::midGain_pngSize);
+    midGainButton.setClickingTogglesState(true);
+    midGainButton.setBounds(0, 0, 30, 30);
+    midGainButton.setImages(
+        false, true, true,
+        midGainIcon, 1.0f, juce::Colours::grey,
+        midGainIcon, 1.0f, juce::Colours::grey,
+        midGainIcon, 1.0f, juce::Colours::red,
+        0.0f);
+    addAndMakeVisible(midGainButton);
+
+    auto highGainIcon = juce::ImageCache::getFromMemory(BinaryData::highGain_png,
+        BinaryData::highGain_pngSize);
+    highGainButton.setClickingTogglesState(true);
+    highGainButton.setBounds(0, 0, 30, 30);
+    highGainButton.setImages(
+        false, true, true,
+        highGainIcon, 1.0f, juce::Colours::grey,
+        highGainIcon, 1.0f, juce::Colours::grey,
+        highGainIcon, 1.0f, juce::Colours::red,
+        0.0f);
+    addAndMakeVisible(highGainButton);
+
     restoreIRFile();
 
     setSize (700, 400);
@@ -94,7 +130,6 @@ DkAmpAudioProcessorEditor::~DkAmpAudioProcessorEditor()
     loadButton.setLookAndFeel(nullptr);
     previousButton.setLookAndFeel(nullptr);
     nextButton.setLookAndFeel(nullptr);
-    cabEnableButton.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -154,6 +189,10 @@ void DkAmpAudioProcessorEditor::resized()
     fileComboBox.setBounds((eqWidth * 0.20) - (buttonWidth / 2), buttonHeight + 25 + 10, comboBoxWidth, buttonHeight);
 
     cabEnableButton.setBounds((eqWidth * 0.20) - (buttonWidth / 2), buttonHeight + 25 + 20 + buttonHeight, comboBoxWidth, buttonHeight);
+
+    lowGainButton.setTopLeftPosition((0.15 * width) - (bigKnobPx / 2), height - eqHeight - margin + 30);
+    midGainButton.setTopLeftPosition((0.15 * width) - (bigKnobPx / 2) + (bigKnobPx / 2) - 15, height - eqHeight - margin + 30);
+    highGainButton.setTopLeftPosition((0.15 * width) - (bigKnobPx / 2) + bigKnobPx - 30, height - eqHeight - margin + 30);
 }
 
 void DkAmpAudioProcessorEditor::loadIRFile()
@@ -179,8 +218,7 @@ void DkAmpAudioProcessorEditor::loadIRFile()
 
             if (chosen.existsAsFile())
             {
-                audioProcessor.cabSim[0].loadIR(chosen);
-                audioProcessor.cabSim[1].loadIR(chosen);
+                audioProcessor.cabSim.loadIR(chosen);
             }
 
             juce::File folder;
@@ -255,8 +293,7 @@ void DkAmpAudioProcessorEditor::comboBoxChange()
 
             if (selectedFile.existsAsFile())
             {
-                audioProcessor.cabSim[0].loadIR(selectedFile);
-                audioProcessor.cabSim[1].loadIR(selectedFile);
+                audioProcessor.cabSim.loadIR(selectedFile);
                 audioProcessor.apvts.state.setProperty("IR_file", selectedFile.getFullPathName(), nullptr);
             }
         }
@@ -281,8 +318,7 @@ void DkAmpAudioProcessorEditor::nextIR()
 
             if (selectedFile.existsAsFile())
             {
-                audioProcessor.cabSim[0].loadIR(selectedFile);
-                audioProcessor.cabSim[1].loadIR(selectedFile);
+                audioProcessor.cabSim.loadIR(selectedFile);
                 audioProcessor.apvts.state.setProperty("IR_file", selectedFile.getFullPathName(), nullptr);
             }
         }
@@ -307,8 +343,7 @@ void DkAmpAudioProcessorEditor::prevIR()
 
             if (selectedFile.existsAsFile())
             {
-                audioProcessor.cabSim[0].loadIR(selectedFile);
-                audioProcessor.cabSim[1].loadIR(selectedFile);
+                audioProcessor.cabSim.loadIR(selectedFile);
                 audioProcessor.apvts.state.setProperty("IR_file", selectedFile.getFullPathName(), nullptr);
             }
         }

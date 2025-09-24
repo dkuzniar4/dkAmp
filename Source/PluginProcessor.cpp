@@ -16,9 +16,9 @@ DkAmpAudioProcessor::DkAmpAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
+                       .withInput  ("Input",  juce::AudioChannelSet::mono(), true)
                       #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                       .withOutput ("Output", juce::AudioChannelSet::mono(), true)
                      #endif
                        )
 #endif
@@ -119,8 +119,7 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     params.reset();
     params.update();
 
-    eq[0].initialise(sampleRate, 200.0f, 1000.0f, 8000.0f);
-    eq[1].initialise(sampleRate, 200.0f, 1000.0f, 8000.0f);
+    eq.initialise(sampleRate, 250.0f, 800.0f, 3000.0f);
     
     auto filePath = apvts.state.getProperty("IR_file").toString();
 
@@ -130,18 +129,15 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
         
         if (file.existsAsFile())
         {
-            cabSim[0].loadIR(file);
-            cabSim[1].loadIR(file);
+            cabSim.loadIR(file);
         }
     }
 
-    //tran[0].load(&dkAmpProfile[0][0]);
-    tran[0].load(&_57customChamp[0][0]);
-    tran[0].init(100, FREQ_1, FREQ_2, sampleRate);
+    tran.load(&deluxeRev[0][0]);
+    //tran.load(&_57customChamp[0][0]);
+    tran.init(100, FREQ_1, FREQ_2, sampleRate);
 
-    //tran[1].load(&dkAmpProfile[0][0]);
-    tran[1].load(&_57customChamp[0][0]);
-    tran[1].init(100, FREQ_1, FREQ_2, sampleRate);
+    comp.setRatio(4.0f);
 }
 
 void DkAmpAudioProcessor::releaseResources()
@@ -162,8 +158,6 @@ bool DkAmpAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
     //        << ", out: " << mainOut.getDescription());
 
     if (mainIn == mono && mainOut == mono) { return true; }
-    if (mainIn == mono && mainOut == stereo) { return true; }
-    if (mainIn == stereo && mainOut == stereo) { return true; }
 
     return false;
 }
@@ -187,61 +181,61 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
     params.update();
     
-    cabSim[0].setEnable(params.cabEnabled);
-    cabSim[1].setEnable(params.cabEnabled);
+    cabSim.setEnable(params.cabEnabled);
 
-    for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+    tran.enableLow(params.lowGain);
+    tran.enableMid(params.midGain);
+    tran.enableHigh(params.highGain);
+
+    const float* inputData = buffer.getReadPointer(0);
+    float* outputData = buffer.getWritePointer(0);
+ 
+
+    for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
     {
-        const float* inputData = buffer.getReadPointer(channel);
-        float* outputData = buffer.getWritePointer(channel);
+        params.smoothen();
 
-        for (int sample = 0; sample < buffer.getNumSamples(); ++sample)
+        float signal = inputData[sample];
+
+        if (!params.bypassed)
         {
-            params.smoothen();
-
-            float input = inputData[sample];
-
-            if (!params.bypassed)
+            if (params.eqLow != lastEqLow)
             {
-                float signal;
-
-                // alternative non-linear function
-                //signal = softClipWaveShaper(input, params.gain);
-
-                // transistion non-linear function
-                signal = tran[channel].process(input * (params.gain / 10.0f));
-
-                // to do lastEqLow - is common for both channels !!!
-                if (params.eqLow != lastEqLow)
-                {
-                    eq[channel].setLowGain(params.eqLow);
-                    lastEqLow = params.eqLow;
-                }
-
-                if (params.eqMid != lastEqMid)
-                {
-                    eq[channel].setMidGain(params.eqMid);
-                    lastEqMid = params.eqMid;
-                }
-
-                if (params.eqHigh != lastEqHigh)
-                {
-                    eq[channel].setHighGain(params.eqHigh);
-                    lastEqHigh = params.eqHigh;
-                }
-
-                signal = eq[channel].processSample(signal);
-
-                signal = cabSim[channel].process(signal);
-
-                signal = signal * params.output;
-
-                outputData[sample] = signal;
+                eq.setLowGain(params.eqLow);
+                lastEqLow = params.eqLow;
             }
-            else
+
+            if (params.eqMid != lastEqMid)
             {
-                outputData[sample] = input;
+                eq.setMidGain(params.eqMid);
+                lastEqMid = params.eqMid;
             }
+
+            if (params.eqHigh != lastEqHigh)
+            {
+                eq.setHighGain(params.eqHigh);
+                lastEqHigh = params.eqHigh;
+            }
+
+            signal = eq.processSample(signal);
+
+            // alternative non-linear function
+            //signal = softClipWaveShaper(signal, params.gain);
+
+            // transistion non-linear function
+            signal = tran.process(signal * (params.gain / 10.0f));
+
+            signal = cabSim.process(signal);
+
+            signal = comp.process(signal, 0.6f, true);
+
+            signal = signal * params.output;
+
+            outputData[sample] = signal;
+        }
+        else
+        {
+            outputData[sample] = signal;
         }
     }
 }

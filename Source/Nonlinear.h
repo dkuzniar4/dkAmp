@@ -54,6 +54,10 @@ public:
     // Process data
     float process(float input);
 
+    void enableLow(bool state);
+    void enableMid(bool state);
+    void enableHigh(bool state);
+
     void reset();
 
 private:
@@ -69,4 +73,8 @@ private:
     SimpleBiquad mid_hp1, mid_hp2;
     SimpleBiquad mid_lp1, mid_lp2;
     SimpleBiquad high_hp1, high_hp2;
+
+    bool enLow = true;
+    bool enMid = true;
+    bool enHigh = true;
 };
