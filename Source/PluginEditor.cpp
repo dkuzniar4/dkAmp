@@ -52,6 +52,10 @@ DkAmpAudioProcessorEditor::DkAmpAudioProcessorEditor (DkAmpAudioProcessor& p)
     cabEnableButton.setClickingTogglesState(true);
     cabEnableButton.setLookAndFeel(ButtonLookAndFeel::get());
 
+    cabNormButton.setButtonText("Normalize");
+    cabNormButton.setClickingTogglesState(true);
+    cabNormButton.setLookAndFeel(ButtonLookAndFeel::get());
+
     cabGroup.addAndMakeVisible(loadButton);
     cabGroup.addChildComponent(loadButton);
     cabGroup.addAndMakeVisible(previousButton);
@@ -62,6 +66,8 @@ DkAmpAudioProcessorEditor::DkAmpAudioProcessorEditor (DkAmpAudioProcessor& p)
     cabGroup.addChildComponent(fileComboBox);
     cabGroup.addAndMakeVisible(cabEnableButton);
     cabGroup.addChildComponent(cabEnableButton);
+    cabGroup.addAndMakeVisible(cabNormButton);
+    cabGroup.addChildComponent(cabNormButton);
     addAndMakeVisible(cabGroup);
 
     addAndMakeVisible(gainKnob);
@@ -175,10 +181,10 @@ void DkAmpAudioProcessorEditor::resized()
 
     bypassButton.setTopLeftPosition(bounds.getRight() - bypassButton.getWidth() - 10, 10);
 
-    cabGroup.setBounds((width / 2) - (eqWidth / 2), height - eqHeight - margin, eqWidth, eqHeight);
-    
     auto buttonWidth = 70;
     auto buttonHeight = 25;
+
+    cabGroup.setBounds((width / 2) - (eqWidth / 2), height - eqHeight - margin, eqWidth, eqHeight + buttonHeight + 10);
 
     loadButton.setBounds((eqWidth * 0.20) - (buttonWidth / 2), 25, buttonWidth, buttonHeight);
     previousButton.setBounds((eqWidth * 0.5) - (buttonWidth / 2), 25, buttonWidth, buttonHeight);
@@ -189,6 +195,7 @@ void DkAmpAudioProcessorEditor::resized()
     fileComboBox.setBounds((eqWidth * 0.20) - (buttonWidth / 2), buttonHeight + 25 + 10, comboBoxWidth, buttonHeight);
 
     cabEnableButton.setBounds((eqWidth * 0.20) - (buttonWidth / 2), buttonHeight + 25 + 20 + buttonHeight, comboBoxWidth, buttonHeight);
+    cabNormButton.setBounds((eqWidth * 0.20) - (buttonWidth / 2), buttonHeight + 25 + 20 + buttonHeight + buttonHeight + 10, comboBoxWidth, buttonHeight);
 
     lowGainButton.setTopLeftPosition((0.15 * width) - (bigKnobPx / 2), height - eqHeight - margin + 30);
     midGainButton.setTopLeftPosition((0.15 * width) - (bigKnobPx / 2) + (bigKnobPx / 2) - 15, height - eqHeight - margin + 30);

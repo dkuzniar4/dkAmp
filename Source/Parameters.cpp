@@ -85,6 +85,7 @@ Parameters::Parameters(juce::AudioProcessorValueTreeState& apvts)
     castParameter(apvts, lowGainParamID, lowGainParam);
     castParameter(apvts, midGainParamID, midGainParam);
     castParameter(apvts, highGainParamID, highGainParam);
+    castParameter(apvts, cabNormParamID, cabNormParam);
     
     update();
 }
@@ -145,6 +146,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout Parameters::createParameterL
         cabEnableParamID, "Cab Enable", false));
 
     layout.add(std::make_unique<juce::AudioParameterBool>(
+        cabNormParamID, "Cab normalize", false));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>(
         lowGainParamID, "Low gain enable", false));
 
     layout.add(std::make_unique<juce::AudioParameterBool>(
@@ -198,6 +202,7 @@ void Parameters::update() noexcept
     lowGain = lowGainParam->get();
     midGain = midGainParam->get();
     highGain = highGainParam->get();
+    cabNorm = cabNormParam->get();
 }
 
 void Parameters::smoothen() noexcept

@@ -14,7 +14,7 @@
 #include "Nonlinear.h"
 #include "ParamEq.h"
 #include "CabSim.h"
-#include "Compressor.h"
+
 
 //==============================================================================
 /**
@@ -77,10 +77,8 @@ private:
     int samplesPerBlock;
 
     SimpleEQ eq;
-
     NonlinearProcessor tran;
 
-    Compressor comp;
 
     float lastEqLow = 0.0f;
     float lastEqMid = 0.0f;

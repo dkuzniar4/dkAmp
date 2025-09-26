@@ -15,8 +15,8 @@
       <FILE id="hkNd1z" name="dkLogo.png" compile="0" resource="1" file="Assets/dkLogo.png"/>
     </GROUP>
     <GROUP id="{0C9F0D86-D811-C251-2FD9-A1D0C3BE4FC3}" name="Source">
-      <FILE id="kqBxn4" name="Compressor.cpp" compile="1" resource="0" file="Source/Compressor.cpp"/>
-      <FILE id="VkIUuh" name="Compressor.h" compile="0" resource="0" file="Source/Compressor.h"/>
+      <FILE id="NQtCh1" name="Resampler.cpp" compile="1" resource="0" file="Source/Resampler.cpp"/>
+      <FILE id="zpOQNd" name="Resampler.h" compile="0" resource="0" file="Source/Resampler.h"/>
       <FILE id="fouOUb" name="ampProfiles.h" compile="0" resource="0" file="Source/ampProfiles.h"/>
       <FILE id="AlgjSP" name="Nonlinear.cpp" compile="1" resource="0" file="Source/Nonlinear.cpp"/>
       <FILE id="nMOdZb" name="Nonlinear.h" compile="0" resource="0" file="Source/Nonlinear.h"/>

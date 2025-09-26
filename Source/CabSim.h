@@ -13,7 +13,7 @@
 #include <JuceHeader.h>
 #include <cstring>
 #include "FFT.h"
-
+#include "Resampler.h"
 
 
 class AudioLoader
@@ -25,6 +25,7 @@ public:
 
     juce::AudioBuffer<float> audioBuffer;
 
+    uint32_t fileSampleRate = 0.0;
 private:
     juce::AudioFormatManager formatManager;
 
@@ -41,6 +42,8 @@ public:
     float process(float input);
     uint32_t calculateFFTWindow(uint32_t length);
 
+    bool normalize = false;
+
 private:
     FFT fft;
 
@@ -54,12 +57,17 @@ private:
     float* outputBuffer = nullptr;   // Output samples buffer
     float* mulBufferRe = nullptr;
     float* mulBufferIm = nullptr;
+    // ring buffer for input block FFTs
+    float** inputFFT_Re = nullptr; // [numFFTSlots][fftSize]
+    float** inputFFT_Im = nullptr;
+    uint32_t fftRingPos = 0; // point place where to save actual FFT block
     uint32_t bufferIndex = 0;
     uint32_t outputBufferIndex = 0;
     uint32_t fftSize = 0;
     uint32_t fftSizeHalf = 0;
     uint32_t IR_len = 0;
     uint32_t numSegments = 0;
+    float normFactor = 1.0f;
 };
 
 class Convolver
@@ -71,6 +79,7 @@ public:
     void setSampleRate(uint32_t sampleRate);
     uint32_t getSampleRate(void);
     void setEnable(bool enable);
+    void setNormalize(bool enable);
 
     bool IR_loaded = false;
     uint32_t IR_len = 0;
@@ -78,6 +87,8 @@ public:
 private:
     AudioLoader IR_loader;
     FIR_FFT_OLS fir_fft_ols;
+    Resampler rs;
+    float* IR = nullptr;
     uint32_t sampleRate = 0;
     bool enable = false;
 

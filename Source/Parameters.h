@@ -11,6 +11,7 @@ const juce::ParameterID eqMidParamID{ "eqMid", 1 };
 const juce::ParameterID eqHighParamID{ "eqHigh", 1 };
 const juce::ParameterID bypassParamID{ "bypass", 1 };
 const juce::ParameterID cabEnableParamID{ "cabEnable", 1 };
+const juce::ParameterID cabNormParamID{ "cabNorm", 1 };
 const juce::ParameterID lowGainParamID{ "lowGain", 1 };
 const juce::ParameterID midGainParamID{ "midGain", 1 };
 const juce::ParameterID highGainParamID{ "highGain", 1 };
@@ -38,10 +39,12 @@ public:
     bool lowGain = true;
     bool midGain = true;
     bool highGain = true;
+    bool cabNorm = false;
 
 
     juce::AudioParameterBool* bypassParam;
     juce::AudioParameterBool* cabEnableParam;
+    juce::AudioParameterBool* cabNormParam;
 
     juce::AudioParameterBool* lowGainParam;
     juce::AudioParameterBool* midGainParam;

@@ -46,6 +46,7 @@ private:
     juce::TextButton previousButton;
     juce::TextButton nextButton;
     juce::TextButton cabEnableButton;
+    juce::TextButton cabNormButton;
 
     juce::ImageButton lowGainButton;
     juce::ImageButton midGainButton;
@@ -57,6 +58,10 @@ private:
 
     juce::AudioProcessorValueTreeState::ButtonAttachment cabEnableAttachment{
         audioProcessor.apvts, cabEnableParamID.getParamID(), cabEnableButton
+    };
+
+    juce::AudioProcessorValueTreeState::ButtonAttachment cabNormAttachment{
+        audioProcessor.apvts, cabNormParamID.getParamID(), cabNormButton
     };
 
     juce::AudioProcessorValueTreeState::ButtonAttachment lowGainAttachment{

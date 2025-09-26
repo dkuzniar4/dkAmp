@@ -123,6 +123,8 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     
     auto filePath = apvts.state.getProperty("IR_file").toString();
 
+    cabSim.setSampleRate(sampleRate);
+
     if (filePath.isNotEmpty())
     {
         juce::File file(filePath);
@@ -136,8 +138,6 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     tran.load(&deluxeRev[0][0]);
     //tran.load(&_57customChamp[0][0]);
     tran.init(100, FREQ_1, FREQ_2, sampleRate);
-
-    comp.setRatio(4.0f);
 }
 
 void DkAmpAudioProcessor::releaseResources()
@@ -217,6 +217,8 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
                 lastEqHigh = params.eqHigh;
             }
 
+            cabSim.setNormalize(params.cabNorm);
+
             signal = eq.processSample(signal);
 
             // alternative non-linear function
@@ -226,8 +228,6 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             signal = tran.process(signal * (params.gain / 10.0f));
 
             signal = cabSim.process(signal);
-
-            signal = comp.process(signal, 0.6f, true);
 
             signal = signal * params.output;
 
