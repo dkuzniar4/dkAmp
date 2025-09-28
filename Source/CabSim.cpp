@@ -42,18 +42,6 @@ juce::AudioBuffer<float>& AudioLoader::getAudioBuffer()
 FIR_FFT_OLS::FIR_FFT_OLS()
     : fftSize(0),
     fftSizeHalf(0),
-    inputBufferRe(nullptr),
-    inputBufferIm(nullptr),
-    inputBuffer(nullptr),
-    overlapBuffer(nullptr),
-    outputBuffer(nullptr),
-    h_norm(nullptr),
-    mulBufferRe(nullptr),
-    mulBufferIm(nullptr),
-    inputFFT_Re(nullptr),
-    inputFFT_Im(nullptr),
-    h_fft_Re(nullptr),
-    h_fft_Im(nullptr),
     numSegments(0),
     IR_len(0),
     bufferIndex(0),
@@ -63,25 +51,6 @@ FIR_FFT_OLS::FIR_FFT_OLS()
 
 FIR_FFT_OLS::~FIR_FFT_OLS()
 {
-    delete[] inputBufferRe;
-    delete[] inputBufferIm;
-    delete[] inputBuffer;
-    delete[] overlapBuffer;
-    delete[] outputBuffer;
-    delete[] h_norm;
-    delete[] mulBufferRe;
-    delete[] mulBufferIm;
-
-    if (h_fft_Re)
-    {
-        for (uint32_t i = 0; i < numSegments; ++i) delete[] h_fft_Re[i];
-        delete[] h_fft_Re;
-    }
-    if (h_fft_Im)
-    {
-        for (uint32_t i = 0; i < numSegments; ++i) delete[] h_fft_Im[i];
-        delete[] h_fft_Im;
-    }
 }
 
 void FIR_FFT_OLS::setFFTSize(uint32_t size)
@@ -90,23 +59,14 @@ void FIR_FFT_OLS::setFFTSize(uint32_t size)
     fftSize = size;
     fftSizeHalf = fftSize / 2;
 
-    // free old
-    if (inputBufferRe) delete[] inputBufferRe;
-    if (inputBufferIm) delete[] inputBufferIm;
-    if (inputBuffer) delete[] inputBuffer;
-    if (mulBufferRe) delete[] mulBufferRe;
-    if (mulBufferIm) delete[] mulBufferIm;
-    if (overlapBuffer) delete[] overlapBuffer;
-    if (outputBuffer) delete[] outputBuffer;
-
     // allocate and zero
-    inputBufferRe = new float[fftSize];   std::memset(inputBufferRe, 0, fftSize * sizeof(float));
-    inputBufferIm = new float[fftSize];   std::memset(inputBufferIm, 0, fftSize * sizeof(float));
-    inputBuffer = new float[fftSizeHalf]; std::memset(inputBuffer, 0, fftSizeHalf * sizeof(float));
-    mulBufferRe = new float[fftSize];   std::memset(mulBufferRe, 0, fftSize * sizeof(float));
-    mulBufferIm = new float[fftSize];   std::memset(mulBufferIm, 0, fftSize * sizeof(float));
-    overlapBuffer = new float[fftSizeHalf]; std::memset(overlapBuffer, 0, fftSizeHalf * sizeof(float));
-    outputBuffer = new float[fftSizeHalf]; std::memset(outputBuffer, 0, fftSizeHalf * sizeof(float));
+    inputBufferRe.resize(fftSize, 0.0f);
+    inputBufferIm.resize(fftSize, 0.0f);
+    inputBuffer.resize(fftSizeHalf, 0.0f);
+    mulBufferRe.resize(fftSize, 0.0f);
+    mulBufferIm.resize(fftSize, 0.0f);
+    overlapBuffer.resize(fftSizeHalf, 0.0f);
+    outputBuffer.resize(fftSizeHalf, 0.0f);
 
     // reset indices
     bufferIndex = 0;
@@ -117,71 +77,24 @@ void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
 {
     IR_len = h_len;
 
-    // -- copying IR --
-    if (h_norm) delete[] h_norm;
-    h_norm = new float[IR_len];
-    std::memcpy(h_norm, h, IR_len * sizeof(float));
-
-    // -- free old FFT segments --
-    if (h_fft_Re)
-    {
-        for (uint32_t i = 0; i < numSegments; ++i)
-        {
-            delete[] h_fft_Re[i];
-        }
-        delete[] h_fft_Re;
-        h_fft_Re = nullptr;
-    }
-
-    if (h_fft_Im)
-    {
-        for (uint32_t i = 0; i < numSegments; ++i)
-        {
-            delete[] h_fft_Im[i];
-        }
-        delete[] h_fft_Im;
-        h_fft_Im = nullptr;
-    }
-
     // --- alocate ring buffers for input FFT  ---
-    if (inputFFT_Re)
-    {
-        for (uint32_t i = 0; i < numSegments; ++i)
-        {
-            delete[] inputFFT_Re[i];
-        }
-        delete[] inputFFT_Re;
-        inputFFT_Re = nullptr;
-    }
-
-    if (inputFFT_Im)
-    {
-        for (uint32_t i = 0; i < numSegments; ++i)
-        {
-            delete[] inputFFT_Im[i];
-        }
-        delete[] inputFFT_Im;
-        inputFFT_Im = nullptr;
-    }
-
     numSegments = static_cast<uint32_t>(std::ceil((float)IR_len / (float)fftSizeHalf));
 
     // -- alocate FFT segments --
-    h_fft_Re = new float* [numSegments];
-    h_fft_Im = new float* [numSegments];
+    h_fft_Re.resize(numSegments, std::vector<float>(fftSize, 0.0f));
+    h_fft_Im.resize(numSegments, std::vector<float>(fftSize, 0.0f));
+
     for (uint32_t seg = 0; seg < numSegments; ++seg)
     {
-        h_fft_Re[seg] = new float[fftSize];
-        h_fft_Im[seg] = new float[fftSize];
-        std::memset(h_fft_Re[seg], 0, fftSize * sizeof(float));
-        std::memset(h_fft_Im[seg], 0, fftSize * sizeof(float));
+        std::memset(h_fft_Re[seg].data(), 0, fftSize * sizeof(float));
+        std::memset(h_fft_Im[seg].data(), 0, fftSize * sizeof(float));
 
         uint32_t startIdx = seg * fftSizeHalf;
         uint32_t copyLength = std::min(IR_len - startIdx, fftSizeHalf);
         if (copyLength > 0)
-            std::memcpy(h_fft_Re[seg], &h_norm[startIdx], copyLength * sizeof(float));
+            std::memcpy(h_fft_Re[seg].data(), &h[startIdx], copyLength * sizeof(float));
 
-        fft.FFT_process(h_fft_Re[seg], h_fft_Im[seg], fftSize);
+        fft.FFT_process(h_fft_Re[seg].data(), h_fft_Im[seg].data(), fftSize);
     }
 
     // -- calculate normFactor in frequency domain --
@@ -196,14 +109,13 @@ void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
 
     normFactor = 1.0f / Gmax;
 
-    inputFFT_Re = new float* [numSegments];
-    inputFFT_Im = new float* [numSegments];
+    inputFFT_Re.resize(numSegments, std::vector<float>(fftSize, 0.0f));
+    inputFFT_Im.resize(numSegments, std::vector<float>(fftSize, 0.0f));
+ 
     for (uint32_t i = 0; i < numSegments; ++i)
     {
-        inputFFT_Re[i] = new float[fftSize];
-        inputFFT_Im[i] = new float[fftSize];
-        std::memset(inputFFT_Re[i], 0, fftSize * sizeof(float));
-        std::memset(inputFFT_Im[i], 0, fftSize * sizeof(float));
+        std::memset(inputFFT_Re[i].data(), 0, fftSize * sizeof(float));
+        std::memset(inputFFT_Im[i].data(), 0, fftSize * sizeof(float));
     }
 
     fftRingPos = 0;
@@ -229,18 +141,18 @@ float FIR_FFT_OLS::process(float input)
     if (bufferIndex >= fftSizeHalf)
     {
         // prepare input block: first half = overlap, second half = inputBuffer (already written)
-        std::memcpy(inputBufferRe, overlapBuffer, fftSizeHalf * sizeof(float));
-        std::memset(inputBufferIm, 0, fftSize * sizeof(float)); // imag = 0
+        std::memcpy(inputBufferRe.data(), overlapBuffer.data(), fftSizeHalf * sizeof(float));
+        std::memset(inputBufferIm.data(), 0, fftSize * sizeof(float)); // imag = 0
 
         // FFT of current input block -> store into ring at fftRingPos
-        fft.FFT_process(inputBufferRe, inputBufferIm, fftSize);
+        fft.FFT_process(inputBufferRe.data(), inputBufferIm.data(), fftSize);
         // copy FFT result into ring slot
-        std::memcpy(inputFFT_Re[fftRingPos], inputBufferRe, fftSize * sizeof(float));
-        std::memcpy(inputFFT_Im[fftRingPos], inputBufferIm, fftSize * sizeof(float));
+        std::memcpy(inputFFT_Re[fftRingPos].data(), inputBufferRe.data(), fftSize * sizeof(float));
+        std::memcpy(inputFFT_Im[fftRingPos].data(), inputBufferIm.data(), fftSize * sizeof(float));
 
         // clear accumulation buffers
-        std::memset(mulBufferRe, 0, fftSize * sizeof(float));
-        std::memset(mulBufferIm, 0, fftSize * sizeof(float));
+        std::memset(mulBufferRe.data(), 0, fftSize * sizeof(float));
+        std::memset(mulBufferIm.data(), 0, fftSize * sizeof(float));
 
         // accumulate contributions: for each H_seg multiply by X_{r - seg}
         for (uint32_t seg = 0; seg < numSegments; ++seg)
@@ -249,10 +161,10 @@ float FIR_FFT_OLS::process(float input)
             int idx = int(fftRingPos) - int(seg);
             while (idx < 0) idx += int(numSegments);
             // multiply X_idx * H_seg and accumulate
-            float* Xre = inputFFT_Re[idx];
-            float* Xim = inputFFT_Im[idx];
-            float* Hre = h_fft_Re[seg];
-            float* Him = h_fft_Im[seg];
+            float* Xre = inputFFT_Re[idx].data();
+            float* Xim = inputFFT_Im[idx].data();
+            float* Hre = h_fft_Re[seg].data();
+            float* Him = h_fft_Im[seg].data();
 
             for (uint32_t k = 0; k < fftSize; ++k)
             {
@@ -264,13 +176,13 @@ float FIR_FFT_OLS::process(float input)
         }
 
         // IFFT
-        fft.IFFT_process(mulBufferRe, mulBufferIm, fftSize);
+        fft.IFFT_process(mulBufferRe.data(), mulBufferIm.data(), fftSize);
 
         // update overlap buffer with last fftSizeHalf samples of the **input** block
-        std::memcpy(overlapBuffer, inputBuffer, fftSizeHalf * sizeof(float));
+        std::memcpy(overlapBuffer.data(), inputBuffer.data(), fftSizeHalf * sizeof(float));
 
         // copy valid output (second half)
-        std::memcpy(outputBuffer, &mulBufferRe[fftSizeHalf], fftSizeHalf * sizeof(float));
+        std::memcpy(outputBuffer.data(), &mulBufferRe[fftSizeHalf], fftSizeHalf * sizeof(float));
 
         // advance ring position
         fftRingPos = (fftRingPos + 1) % numSegments;
@@ -297,6 +209,14 @@ float FIR_FFT_OLS::process(float input)
 
 Convolver::Convolver() : IR(nullptr)
 {
+}
+
+Convolver::~Convolver()
+{
+    if (IR)
+    {
+        delete[] IR;
+    }
 }
 
 float Convolver::process(float input)
@@ -345,20 +265,16 @@ void Convolver::loadIR(const juce::File& file)
         this->IR_len = IR_loader.audioBuffer.getNumSamples();
     }
 
-    fir_fft_ols.setFFTSize(512);
+    fir_fft_ols.setFFTSize(this->blockLength);
     fir_fft_ols.prepare(this->IR_ptr, this->IR_len);
 
     IR_loaded = true;
 }
 
-void Convolver::setSampleRate(uint32_t sampleRate)
+void Convolver::init(uint32_t sampleRate, uint32_t blockLength)
 {
     this->sampleRate = sampleRate;
-}
-
-uint32_t Convolver::getSampleRate(void)
-{
-    return sampleRate;
+    this->blockLength = blockLength;
 }
 
 void Convolver::setEnable(bool enable)

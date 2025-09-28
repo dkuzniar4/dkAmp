@@ -14,6 +14,7 @@
 #include "Nonlinear.h"
 #include "ParamEq.h"
 #include "CabSim.h"
+#include "ShapeProcessor.h"
 
 
 //==============================================================================
@@ -78,6 +79,7 @@ private:
 
     SimpleEQ eq;
     NonlinearProcessor tran;
+    ShapeProcessor shP;
 
 
     float lastEqLow = 0.0f;

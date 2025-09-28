@@ -15,6 +15,10 @@
       <FILE id="hkNd1z" name="dkLogo.png" compile="0" resource="1" file="Assets/dkLogo.png"/>
     </GROUP>
     <GROUP id="{0C9F0D86-D811-C251-2FD9-A1D0C3BE4FC3}" name="Source">
+      <FILE id="BE02Bo" name="ShapeProcessor.cpp" compile="1" resource="0"
+            file="Source/ShapeProcessor.cpp"/>
+      <FILE id="sipv0c" name="ShapeProcessor.h" compile="0" resource="0"
+            file="Source/ShapeProcessor.h"/>
       <FILE id="NQtCh1" name="Resampler.cpp" compile="1" resource="0" file="Source/Resampler.cpp"/>
       <FILE id="zpOQNd" name="Resampler.h" compile="0" resource="0" file="Source/Resampler.h"/>
       <FILE id="fouOUb" name="ampProfiles.h" compile="0" resource="0" file="Source/ampProfiles.h"/>

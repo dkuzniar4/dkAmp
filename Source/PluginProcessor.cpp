@@ -123,7 +123,7 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     
     auto filePath = apvts.state.getProperty("IR_file").toString();
 
-    cabSim.setSampleRate(sampleRate);
+    cabSim.init(sampleRate, samplesPerBlock);
 
     if (filePath.isNotEmpty())
     {
@@ -135,9 +135,14 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
         }
     }
 
+    // transistion non-linear processing
     tran.load(&deluxeRev[0][0]);
     //tran.load(&_57customChamp[0][0]);
     tran.init(100, FREQ_1, FREQ_2, sampleRate);
+
+    // shape non-linear processing
+    shP.init(25);
+    shP.load(deluxeAmp);
 }
 
 void DkAmpAudioProcessor::releaseResources()
@@ -225,7 +230,10 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             //signal = softClipWaveShaper(signal, params.gain);
 
             // transistion non-linear function
-            signal = tran.process(signal * (params.gain / 10.0f));
+            //signal = tran.process(signal * (params.gain / 10.0f));
+
+            // shape non-linear processing
+            signal = shP.process(signal * (params.gain / 10.0f));
 
             signal = cabSim.process(signal);
 

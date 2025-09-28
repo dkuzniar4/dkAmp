@@ -47,19 +47,18 @@ public:
 private:
     FFT fft;
 
-    float** h_fft_Re = nullptr;
-    float** h_fft_Im = nullptr;
-    float* h_norm = nullptr;
-    float* inputBufferRe = nullptr;    // Input samples buffer
-    float* inputBufferIm = nullptr;
-    float* inputBuffer = nullptr;
-    float* overlapBuffer = nullptr; // Overlap buffer for OLA
-    float* outputBuffer = nullptr;   // Output samples buffer
-    float* mulBufferRe = nullptr;
-    float* mulBufferIm = nullptr;
+    std::vector<std::vector<float>> h_fft_Re;
+    std::vector<std::vector<float>> h_fft_Im;
+    std::vector<float> inputBufferRe; // Input samples buffer
+    std::vector<float> inputBufferIm;
+    std::vector<float> inputBuffer;
+    std::vector<float> overlapBuffer;
+    std::vector<float> outputBuffer;
+    std::vector<float> mulBufferRe;
+    std::vector<float> mulBufferIm;
     // ring buffer for input block FFTs
-    float** inputFFT_Re = nullptr; // [numFFTSlots][fftSize]
-    float** inputFFT_Im = nullptr;
+    std::vector<std::vector<float>> inputFFT_Re;
+    std::vector<std::vector<float>> inputFFT_Im;
     uint32_t fftRingPos = 0; // point place where to save actual FFT block
     uint32_t bufferIndex = 0;
     uint32_t outputBufferIndex = 0;
@@ -74,10 +73,10 @@ class Convolver
 {
 public:
     Convolver();
+    ~Convolver();
+    void init(uint32_t sampleRate, uint32_t blockLength);
     float process(float input);
     void loadIR(const juce::File& file);
-    void setSampleRate(uint32_t sampleRate);
-    uint32_t getSampleRate(void);
     void setEnable(bool enable);
     void setNormalize(bool enable);
 
@@ -90,6 +89,7 @@ private:
     Resampler rs;
     float* IR = nullptr;
     uint32_t sampleRate = 0;
+    uint32_t blockLength = 0;
     bool enable = false;
 
     const float* IR_ptr = nullptr;
