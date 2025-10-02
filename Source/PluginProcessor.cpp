@@ -8,7 +8,6 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "ampProfiles.h"
 
 //==============================================================================
 DkAmpAudioProcessor::DkAmpAudioProcessor()
@@ -134,15 +133,10 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
             cabSim.loadIR(file);
         }
     }
-
-    // transistion non-linear processing
-    tran.load(&deluxeRev[0][0]);
-    //tran.load(&_57customChamp[0][0]);
-    tran.init(100, FREQ_1, FREQ_2, sampleRate);
-
-    // shape non-linear processing
-    shP.init(25);
-    shP.load(deluxeAmp);
+    
+    diodeClip.setSeriesResistance(100000.0f); // serier resistance [R]
+    diodeClip.setSaturationCurrent(1.0e-9f); // saturation current [A]
+    diodeClip.setNVt(25.85e-3); // thermal voltage [V]
 }
 
 void DkAmpAudioProcessor::releaseResources()
@@ -188,10 +182,6 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
     
     cabSim.setEnable(params.cabEnabled);
 
-    tran.enableLow(params.lowGain);
-    tran.enableMid(params.midGain);
-    tran.enableHigh(params.highGain);
-
     const float* inputData = buffer.getReadPointer(0);
     float* outputData = buffer.getWritePointer(0);
  
@@ -201,6 +191,8 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
         params.smoothen();
 
         float signal = inputData[sample];
+
+        signal *= (params.gain / 10.0f);
 
         if (!params.bypassed)
         {
@@ -229,15 +221,12 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             // alternative non-linear function
             //signal = softClipWaveShaper(signal, params.gain);
 
-            // transistion non-linear function
-            //signal = tran.process(signal * (params.gain / 10.0f));
-
-            // shape non-linear processing
-            signal = shP.process(signal * (params.gain / 10.0f));
+            // diode clipper
+            signal = diodeClip.process(signal);
 
             signal = cabSim.process(signal);
 
-            signal = signal * params.output;
+            signal *= params.output;
 
             outputData[sample] = signal;
         }

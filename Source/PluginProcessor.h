@@ -11,10 +11,9 @@
 #include <JuceHeader.h>
 #include "Parameters.h"
 #include "Preamp.h"
-#include "Nonlinear.h"
 #include "ParamEq.h"
 #include "CabSim.h"
-#include "ShapeProcessor.h"
+#include "DiodeClipper.h"
 
 
 //==============================================================================
@@ -78,8 +77,7 @@ private:
     int samplesPerBlock;
 
     SimpleEQ eq;
-    NonlinearProcessor tran;
-    ShapeProcessor shP;
+    DiodeClipper diodeClip;
 
 
     float lastEqLow = 0.0f;

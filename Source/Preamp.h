@@ -38,3 +38,9 @@ inline double softClipWaveShaper(double xn, double saturation)
     // --- un-normalized soft clipper from Reiss book
     return sgn(xn) * (1.0 - exp(-fabs(saturation * xn)));
 }
+
+inline float waveshaper(float x, float a1, float a2, float a3, float a4)
+{
+    float x2 = x * x;
+    return (a1 * x) + (a2 * x2) + (a3 * x * x2) + (a4 * x2 * x2);
+}

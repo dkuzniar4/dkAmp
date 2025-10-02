@@ -6,26 +6,19 @@
               version="2.0.0">
   <MAINGROUP id="kj6Jvx" name="dkAmp">
     <GROUP id="{E2F1262E-1869-83D1-5A20-E8BC03BD7581}" name="Assets">
-      <FILE id="RL8BTh" name="highGain.png" compile="0" resource="1" file="Assets/highGain.png"/>
-      <FILE id="rx3lsu" name="lowGain.png" compile="0" resource="1" file="Assets/lowGain.png"/>
-      <FILE id="H3aRQQ" name="midGain.png" compile="0" resource="1" file="Assets/midGain.png"/>
       <FILE id="QxF6FU" name="dkAmp.png" compile="0" resource="1" file="Assets/dkAmp.png"/>
       <FILE id="SrvUkR" name="Bypass.png" compile="0" resource="1" file="Assets/Bypass.png"/>
       <FILE id="DUc9nN" name="Lato-Medium.ttf" compile="0" resource="1" file="Assets/Lato-Medium.ttf"/>
       <FILE id="hkNd1z" name="dkLogo.png" compile="0" resource="1" file="Assets/dkLogo.png"/>
     </GROUP>
     <GROUP id="{0C9F0D86-D811-C251-2FD9-A1D0C3BE4FC3}" name="Source">
-      <FILE id="BE02Bo" name="ShapeProcessor.cpp" compile="1" resource="0"
-            file="Source/ShapeProcessor.cpp"/>
-      <FILE id="sipv0c" name="ShapeProcessor.h" compile="0" resource="0"
-            file="Source/ShapeProcessor.h"/>
+      <FILE id="ERfg3Y" name="DiodeClipper.cpp" compile="1" resource="0"
+            file="Source/DiodeClipper.cpp"/>
+      <FILE id="EYE4um" name="DiodeClipper.h" compile="0" resource="0" file="Source/DiodeClipper.h"/>
       <FILE id="NQtCh1" name="Resampler.cpp" compile="1" resource="0" file="Source/Resampler.cpp"/>
       <FILE id="zpOQNd" name="Resampler.h" compile="0" resource="0" file="Source/Resampler.h"/>
-      <FILE id="fouOUb" name="ampProfiles.h" compile="0" resource="0" file="Source/ampProfiles.h"/>
-      <FILE id="AlgjSP" name="Nonlinear.cpp" compile="1" resource="0" file="Source/Nonlinear.cpp"/>
-      <FILE id="nMOdZb" name="Nonlinear.h" compile="0" resource="0" file="Source/Nonlinear.h"/>
-      <FILE id="HSYdvn" name="FFT.cpp" compile="1" resource="0" file="Source/FFT.cpp"/>
       <FILE id="GohJWx" name="FFT.h" compile="0" resource="0" file="Source/FFT.h"/>
+      <FILE id="HSYdvn" name="FFT.cpp" compile="1" resource="0" file="Source/FFT.cpp"/>
       <FILE id="GusAQM" name="CabSim.cpp" compile="1" resource="0" file="Source/CabSim.cpp"/>
       <FILE id="mHXl2z" name="CabSim.h" compile="0" resource="0" file="Source/CabSim.h"/>
       <FILE id="BjZBKG" name="ParamEq.cpp" compile="1" resource="0" file="Source/ParamEq.cpp"/>

@@ -48,9 +48,6 @@ private:
     juce::TextButton cabEnableButton;
     juce::TextButton cabNormButton;
 
-    juce::ImageButton lowGainButton;
-    juce::ImageButton midGainButton;
-    juce::ImageButton highGainButton;
 
     juce::AudioProcessorValueTreeState::ButtonAttachment bypassAttachment{
         audioProcessor.apvts, bypassParamID.getParamID(), bypassButton
@@ -62,18 +59,6 @@ private:
 
     juce::AudioProcessorValueTreeState::ButtonAttachment cabNormAttachment{
         audioProcessor.apvts, cabNormParamID.getParamID(), cabNormButton
-    };
-
-    juce::AudioProcessorValueTreeState::ButtonAttachment lowGainAttachment{
-        audioProcessor.apvts, lowGainParamID.getParamID(), lowGainButton
-    };
-
-    juce::AudioProcessorValueTreeState::ButtonAttachment midGainAttachment{
-        audioProcessor.apvts, midGainParamID.getParamID(), midGainButton
-    };
-
-    juce::AudioProcessorValueTreeState::ButtonAttachment highGainAttachment{
-        audioProcessor.apvts, highGainParamID.getParamID(), highGainButton
     };
 
     juce::ComboBox fileComboBox;
