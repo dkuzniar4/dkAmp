@@ -111,18 +111,26 @@ void DkAmpAudioProcessor::changeProgramName (int index, const juce::String& newN
 //==============================================================================
 void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    this->sampleRate = sampleRate;
-    this->samplesPerBlock = samplesPerBlock;
+    if (sampleRate > 0 && samplesPerBlock > 0)
+    {
+        this->sampleRate = sampleRate;
+        this->samplesPerBlock = samplesPerBlock;
+    }
+    else // default
+    {
+        this->sampleRate = 48000.0;
+        this->samplesPerBlock = 64;
+    }
 
-    params.prepareToPlay(sampleRate);
+    params.prepareToPlay(this->sampleRate);
     params.reset();
     params.update();
 
-    eq.initialise(sampleRate, 250.0f, 800.0f, 3000.0f);
+    eq.initialise(this->sampleRate, 250.0f, 800.0f, 3000.0f);
     
     auto filePath = apvts.state.getProperty("IR_file").toString();
 
-    cabSim.init(sampleRate, samplesPerBlock);
+    cabSim.init(this->sampleRate, this->samplesPerBlock);
 
     if (filePath.isNotEmpty())
     {
@@ -152,9 +160,6 @@ bool DkAmpAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) co
     const auto stereo = juce::AudioChannelSet::stereo();
     const auto mainIn = layouts.getMainInputChannelSet();
     const auto mainOut = layouts.getMainOutputChannelSet();
-
-    //DBG("isBusesLayoutSupported, in: " << mainIn.getDescription()
-    //        << ", out: " << mainOut.getDescription());
 
     if (mainIn == mono && mainOut == mono) { return true; }
 
@@ -222,7 +227,7 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             //signal = softClipWaveShaper(signal, params.gain);
 
             // diode clipper
-            //signal = diodeClip.process(signal);
+            signal = diodeClip.process(signal);
 
             signal = cabSim.process(signal);
 

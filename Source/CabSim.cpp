@@ -12,7 +12,7 @@
 #include <cmath>
 #include "chirp.h"
 
-#define IR_NORM_FACTOR 0.95f
+#define IR_NORM_FACTOR 0.90f
 
 AudioLoader::AudioLoader()
 {
@@ -56,11 +56,25 @@ FIR_FFT_OLS::~FIR_FFT_OLS()
 
 void FIR_FFT_OLS::setFFTSize(uint32_t size)
 {
-    // size must be power of two and >= 2
     fftSize = size;
     fftSizeHalf = fftSize / 2;
 
-    // allocate and zero
+    // --- clear buffers that depend on fftSize ---
+    inputBufferRe.clear();
+    inputBufferIm.clear();
+    inputBuffer.clear();
+    mulBufferRe.clear();
+    mulBufferIm.clear();
+    overlapBuffer.clear();
+    outputBuffer.clear();
+
+    // --- optional: clear FFT segment buffers if re-preparing later ---
+    h_fft_Re.clear();
+    h_fft_Im.clear();
+    inputFFT_Re.clear();
+    inputFFT_Im.clear();
+
+    // --- allocate new buffers ---
     inputBufferRe.resize(fftSize, 0.0f);
     inputBufferIm.resize(fftSize, 0.0f);
     inputBuffer.resize(fftSizeHalf, 0.0f);
@@ -69,7 +83,6 @@ void FIR_FFT_OLS::setFFTSize(uint32_t size)
     overlapBuffer.resize(fftSizeHalf, 0.0f);
     outputBuffer.resize(fftSizeHalf, 0.0f);
 
-    // reset indices
     bufferIndex = 0;
     outputBufferIndex = 0;
 }
@@ -77,6 +90,11 @@ void FIR_FFT_OLS::setFFTSize(uint32_t size)
 void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
 {
     IR_len = h_len;
+
+    h_fft_Re.clear();
+    h_fft_Im.clear();
+    inputFFT_Re.clear();
+    inputFFT_Im.clear();
 
     // --- alocate ring buffers for input FFT  ---
     numSegments = static_cast<uint32_t>(std::ceil((float)IR_len / (float)fftSizeHalf));
@@ -107,7 +125,7 @@ void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
         std::memset(inputFFT_Im[i].data(), 0, fftSize * sizeof(float));
     }
 
-    fftRingPos = 0;
+    fftRingPos = 0u;
 }
 
 void FIR_FFT_OLS::setNormFactor(float value)
@@ -115,14 +133,25 @@ void FIR_FFT_OLS::setNormFactor(float value)
     normFactor = value;
 }
 
-uint32_t FIR_FFT_OLS::calculateFFTWindow(uint32_t length)
+void FIR_FFT_OLS::clearBuffers()
 {
-    uint32_t fftSize = 1;
-    while (fftSize < length)
-    {
-        fftSize *= 2; // Find the next power of 2 larger than 2 * IR_len
-    }
-    return fftSize;
+    std::fill(inputBufferRe.begin(), inputBufferRe.end(), 0.0f);
+    std::fill(inputBufferIm.begin(), inputBufferIm.end(), 0.0f);
+    std::fill(inputBuffer.begin(), inputBuffer.end(), 0.0f);
+    std::fill(mulBufferRe.begin(), mulBufferRe.end(), 0.0f);
+    std::fill(mulBufferIm.begin(), mulBufferIm.end(), 0.0f);
+    std::fill(overlapBuffer.begin(), overlapBuffer.end(), 0.0f);
+    std::fill(outputBuffer.begin(), outputBuffer.end(), 0.0f);
+
+    for (auto& segment : inputFFT_Re)
+        std::fill(segment.begin(), segment.end(), 0.0f);
+
+    for (auto& segment : inputFFT_Im)
+        std::fill(segment.begin(), segment.end(), 0.0f);
+
+    bufferIndex = 0u;
+    outputBufferIndex = 0u;
+    fftRingPos = 0u;
 }
 
 float FIR_FFT_OLS::process(float input)
@@ -215,7 +244,7 @@ Convolver::~Convolver()
 
 float Convolver::process(float input)
 {
-    if (IR_loaded == true)
+    if (IR_loaded == true && reinitFlag == false)
     {
         if (enable == true)
         {
@@ -259,18 +288,25 @@ void Convolver::loadIR(const juce::File& file)
         this->IR_len = IR_loader.audioBuffer.getNumSamples();
     }
 
-    fir_fft_ols.setFFTSize(this->blockLength);
     fir_fft_ols.prepare(this->IR_ptr, this->IR_len);
 
+    normalize();
     normalize();
 
     IR_loaded = true;
 }
 
-void Convolver::init(uint32_t sampleRate, uint32_t blockLength)
+void Convolver::init(double sampleRate, int blockLength)
 {
+    reinitFlag = true;
+
     this->sampleRate = sampleRate;
     this->blockLength = blockLength;
+    this->fftSizeN = fir_fft_ols.fft.calculateFFTWindow(static_cast<uint32_t>(this->blockLength));
+
+    fir_fft_ols.setFFTSize(this->fftSizeN);
+
+    reinitFlag = false;
 }
 
 void Convolver::setEnable(bool enable)
@@ -285,17 +321,17 @@ void Convolver::setNormalize(bool enable)
 
 void Convolver::normalize()
 {
-    uint32_t testSigLength = CHIRP_LENGTH + IR_len;
+    normPending = true;
 
     float max = 0.0f;
-    float signal;
-    float absSignal;
+    float signal = 0.0f;
+    float absSignal = 0.0f;
+
+    bool actualNormState = fir_fft_ols.normalize;
+    setNormalize(false);
 
     // clear old memory with zeros
-    for (uint32_t i = 0u; i < IR_len; i++)
-    {
-        (void)fir_fft_ols.process(0.0f);
-    }
+    fir_fft_ols.clearBuffers();
 
     for (uint32_t i = 0u; i < CHIRP_LENGTH; i++)
     {
@@ -322,14 +358,16 @@ void Convolver::normalize()
         }
     }
 
-    // clear old memory with zeros
-    for (uint32_t i = 0u; i < IR_len; i++)
-    {
-        (void)fir_fft_ols.process(0.0f);
-    }
-
     float factor = IR_NORM_FACTOR / max;
 
-    fir_fft_ols.setNormFactor(factor);
-}
+    DBG("max= " << max << ", factor= " << factor);
 
+    fir_fft_ols.setNormFactor(factor);
+
+    // clear buffers
+    fir_fft_ols.clearBuffers();
+
+    setNormalize(actualNormState);
+
+    normPending = false;
+}

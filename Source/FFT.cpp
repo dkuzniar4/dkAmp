@@ -153,4 +153,3 @@ uint32_t FFT::calculateFFTWindow(uint32_t length)
     }
     return fftSize;
 }
-
