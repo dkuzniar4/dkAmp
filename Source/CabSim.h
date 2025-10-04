@@ -41,6 +41,7 @@ public:
     void prepare(const float* h, uint32_t h_len);
     float process(float input);
     uint32_t calculateFFTWindow(uint32_t length);
+    void setNormFactor(float value);
 
     bool normalize = false;
 
@@ -79,6 +80,7 @@ public:
     void loadIR(const juce::File& file);
     void setEnable(bool enable);
     void setNormalize(bool enable);
+    void normalize();
 
     bool IR_loaded = false;
     uint32_t IR_len = 0;

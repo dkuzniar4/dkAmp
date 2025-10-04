@@ -10,6 +10,7 @@
 
 #include "CabSim.h"
 #include <cmath>
+#include "chirp.h"
 
 #define IR_NORM_FACTOR 0.95f
 
@@ -97,18 +98,6 @@ void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
         fft.FFT_process(h_fft_Re[seg].data(), h_fft_Im[seg].data(), fftSize);
     }
 
-    // -- calculate normFactor in frequency domain --
-    float Gmax = 0.0f;
-    for (uint32_t k = 0; k < fftSize; ++k)
-    {
-        float sum = 0.0f;
-        for (uint32_t seg = 0; seg < numSegments; ++seg)
-            sum += std::sqrt(h_fft_Re[seg][k] * h_fft_Re[seg][k] + h_fft_Im[seg][k] * h_fft_Im[seg][k]);
-        if (sum > Gmax) Gmax = sum;
-    }
-
-    normFactor = 1.0f / Gmax;
-
     inputFFT_Re.resize(numSegments, std::vector<float>(fftSize, 0.0f));
     inputFFT_Im.resize(numSegments, std::vector<float>(fftSize, 0.0f));
  
@@ -119,6 +108,11 @@ void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
     }
 
     fftRingPos = 0;
+}
+
+void FIR_FFT_OLS::setNormFactor(float value)
+{
+    normFactor = value;
 }
 
 uint32_t FIR_FFT_OLS::calculateFFTWindow(uint32_t length)
@@ -268,6 +262,8 @@ void Convolver::loadIR(const juce::File& file)
     fir_fft_ols.setFFTSize(this->blockLength);
     fir_fft_ols.prepare(this->IR_ptr, this->IR_len);
 
+    normalize();
+
     IR_loaded = true;
 }
 
@@ -286,3 +282,54 @@ void Convolver::setNormalize(bool enable)
 {
     fir_fft_ols.normalize = enable;
 }
+
+void Convolver::normalize()
+{
+    uint32_t testSigLength = CHIRP_LENGTH + IR_len;
+
+    float max = 0.0f;
+    float signal;
+    float absSignal;
+
+    // clear old memory with zeros
+    for (uint32_t i = 0u; i < IR_len; i++)
+    {
+        (void)fir_fft_ols.process(0.0f);
+    }
+
+    for (uint32_t i = 0u; i < CHIRP_LENGTH; i++)
+    {
+        signal = fir_fft_ols.process(chirp[i]);
+
+        absSignal = std::abs(signal);
+
+        if (absSignal > max)
+        {
+            max = absSignal;
+        }
+    }
+
+    // tail of signal with zeros
+    for (uint32_t i = 0u; i < IR_len; i++)
+    {
+        signal = fir_fft_ols.process(0.0f);
+
+        absSignal = std::abs(signal);
+
+        if (absSignal > max)
+        {
+            max = absSignal;
+        }
+    }
+
+    // clear old memory with zeros
+    for (uint32_t i = 0u; i < IR_len; i++)
+    {
+        (void)fir_fft_ols.process(0.0f);
+    }
+
+    float factor = IR_NORM_FACTOR / max;
+
+    fir_fft_ols.setNormFactor(factor);
+}
+
