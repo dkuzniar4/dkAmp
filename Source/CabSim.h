@@ -40,10 +40,8 @@ public:
     void setFFTSize(uint32_t fftSize);
     void prepare(const float* h, uint32_t h_len);
     float process(float input);
-    void setNormFactor(float value);
     void clearBuffers();
 
-    bool normalize = false;
     FFT fft;
 
 private:
@@ -67,7 +65,6 @@ private:
     uint32_t fftSizeHalf = 0;
     uint32_t IR_len = 0;
     uint32_t numSegments = 0;
-    float normFactor = 1.0f;
 };
 
 class Convolver
@@ -80,11 +77,10 @@ public:
     void loadIR(const juce::File& file);
     void setEnable(bool enable);
     void setNormalize(bool enable);
-    void normalize();
+    void normalizeVolume();
 
     bool IR_loaded = false;
     uint32_t IR_len = 0;
-    bool normPending = false;
 
 private:
     AudioLoader IR_loader;
@@ -96,6 +92,8 @@ private:
     uint32_t fftSizeN;
     bool enable = false;
     bool reinitFlag = false;
+    bool normEnable = false;
+    float normFactor = 1.0f;
 
     const float* IR_ptr = nullptr;
 };

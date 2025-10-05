@@ -227,7 +227,7 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
             //signal = softClipWaveShaper(signal, params.gain);
 
             // diode clipper
-            signal = diodeClip.process(signal);
+            signal = diodeClip.process(signal) * 2.0f;
 
             signal = cabSim.process(signal);
 

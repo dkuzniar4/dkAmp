@@ -128,11 +128,6 @@ void FIR_FFT_OLS::prepare(const float* h, uint32_t h_len)
     fftRingPos = 0u;
 }
 
-void FIR_FFT_OLS::setNormFactor(float value)
-{
-    normFactor = value;
-}
-
 void FIR_FFT_OLS::clearBuffers()
 {
     std::fill(inputBufferRe.begin(), inputBufferRe.end(), 0.0f);
@@ -216,16 +211,8 @@ float FIR_FFT_OLS::process(float input)
     }
 
     // return next sample from output buffer
-    float out = 0.0f;
-    if (normalize)
-    {
-        out = outputBuffer[outputBufferIndex++] * normFactor;
-    }
-    else
-    {
-        out = outputBuffer[outputBufferIndex++];
-    }
-    
+    float out = outputBuffer[outputBufferIndex++];
+
     if (outputBufferIndex >= fftSizeHalf) outputBufferIndex = fftSizeHalf; // clamp until next block
     return out;
 }
@@ -248,7 +235,14 @@ float Convolver::process(float input)
     {
         if (enable == true)
         {
-            return fir_fft_ols.process(input);
+            if (normEnable)
+            {
+                return fir_fft_ols.process(input) * normFactor;
+            }
+            else
+            {
+                return fir_fft_ols.process(input);
+            }
         }
         else
         {
@@ -290,8 +284,7 @@ void Convolver::loadIR(const juce::File& file)
 
     fir_fft_ols.prepare(this->IR_ptr, this->IR_len);
 
-    normalize();
-    normalize();
+    normalizeVolume();
 
     IR_loaded = true;
 }
@@ -316,23 +309,18 @@ void Convolver::setEnable(bool enable)
 
 void Convolver::setNormalize(bool enable)
 {
-    fir_fft_ols.normalize = enable;
+    this->normEnable = enable;
 }
 
-void Convolver::normalize()
+void Convolver::normalizeVolume()
 {
-    normPending = true;
-
     float max = 0.0f;
     float signal = 0.0f;
-    float absSignal = 0.0f;
-
-    bool actualNormState = fir_fft_ols.normalize;
-    setNormalize(false);
+    float absSignal = 0.0f;    
 
     // clear old memory with zeros
     fir_fft_ols.clearBuffers();
-
+    
     for (uint32_t i = 0u; i < CHIRP_LENGTH; i++)
     {
         signal = fir_fft_ols.process(chirp[i]);
@@ -358,16 +346,8 @@ void Convolver::normalize()
         }
     }
 
-    float factor = IR_NORM_FACTOR / max;
-
-    DBG("max= " << max << ", factor= " << factor);
-
-    fir_fft_ols.setNormFactor(factor);
+    normFactor = IR_NORM_FACTOR / max;
 
     // clear buffers
     fir_fft_ols.clearBuffers();
-
-    setNormalize(actualNormState);
-
-    normPending = false;
 }
