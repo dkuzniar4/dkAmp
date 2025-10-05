@@ -251,7 +251,7 @@ float Convolver::process(float input)
     }
     else
     {
-        return input;
+        return 0.0f;
     }
 }
 

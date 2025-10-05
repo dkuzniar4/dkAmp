@@ -197,7 +197,7 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
         float signal = inputData[sample];
 
-        signal *= (params.gain / 10.0f);
+        signal *= (params.gain / 2.0f);
 
         if (!params.bypassed)
         {
