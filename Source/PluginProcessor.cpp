@@ -145,6 +145,12 @@ void DkAmpAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     diodeClip.setSeriesResistance(100000.0f); // serier resistance [R]
     diodeClip.setSaturationCurrent(1.0e-9f); // saturation current [A]
     diodeClip.setNVt(25.85e-3); // thermal voltage [V]
+
+    tube.setSampleRate(static_cast<float>(this->sampleRate));
+    //tube.setGain(20.0f);
+    tube.setBias(0.4f);
+    tube.setTone(5000.0f);
+    tube.setOutput(0.65f);
 }
 
 void DkAmpAudioProcessor::releaseResources()
@@ -197,8 +203,6 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
 
         float signal = inputData[sample];
 
-        signal *= (params.gain / 2.0f);
-
         if (!params.bypassed)
         {
             if (params.eqLow != lastEqLow)
@@ -219,18 +223,28 @@ void DkAmpAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::
                 lastEqHigh = params.eqHigh;
             }
 
+            tube.setGain(params.gain * 4.0f);
+
             cabSim.setNormalize(params.cabNorm);
 
-            signal = eq.processSample(signal);
+            // ##### preamp #####
 
             // alternative non-linear function
             //signal = softClipWaveShaper(signal, params.gain);
 
             // diode clipper
-            signal = diodeClip.process(signal) * 2.0f;
+            //signal = diodeClip.process(signal) * 2.0f;
 
+            // tube preamp
+            signal = tube.process(signal);
+
+            // ##### tone stack #####
+            signal = eq.processSample(signal);
+
+            // ##### Cabinet #####
             signal = cabSim.process(signal);
 
+            // ##### output #####
             signal *= params.output;
 
             outputData[sample] = signal;

@@ -11,9 +11,10 @@
 #include <JuceHeader.h>
 #include "Parameters.h"
 #include "Preamp.h"
+#include "DiodeClipper.h"
+#include "TubePreamp.h"
 #include "ParamEq.h"
 #include "CabSim.h"
-#include "DiodeClipper.h"
 
 
 //==============================================================================
@@ -76,8 +77,10 @@ private:
     double sampleRate;
     int samplesPerBlock;
 
-    SimpleEQ eq;
     DiodeClipper diodeClip;
+    TubePreamp tube;
+
+    SimpleEQ eq;
 
 
     float lastEqLow = 0.0f;
