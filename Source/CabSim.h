@@ -83,6 +83,8 @@ public:
     uint32_t IR_len = 0;
 
 private:
+    void generateChirp();
+
     AudioLoader IR_loader;
     FIR_FFT_OLS fir_fft_ols;
     Resampler rs;
@@ -90,6 +92,8 @@ private:
     double sampleRate = 48000.0;
     int blockLength = 64;
     uint32_t fftSizeN;
+    std::vector<float> chirp;
+    uint32_t chirpLength;
     bool enable = false;
     bool reinitFlag = false;
     bool normEnable = false;

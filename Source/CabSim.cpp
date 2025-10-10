@@ -10,9 +10,15 @@
 
 #include "CabSim.h"
 #include <cmath>
-#include "chirp.h"
 
 #define IR_NORM_FACTOR 0.90f
+
+#ifndef M_PI
+namespace
+{
+    const double M_PI = std::acos(-1.0);
+}
+#endif
 
 AudioLoader::AudioLoader()
 {
@@ -299,7 +305,31 @@ void Convolver::init(double sampleRate, int blockLength)
 
     fir_fft_ols.setFFTSize(this->fftSizeN);
 
+    generateChirp();
+
     reinitFlag = false;
+}
+
+void Convolver::generateChirp()
+{
+    float timeLength = 0.05f;
+    chirpLength = (uint32_t)(timeLength * sampleRate);
+
+    float startFreq = 20.0f;
+    float stopFreq = 20000.0f;
+
+    chirp.clear();
+    chirp.assign(chirpLength, 0.0f);
+
+    float T = (float)chirpLength / (float)sampleRate;
+    float K = T / std::log(stopFreq / startFreq); // const for log chirp
+
+    for (uint32_t n = 0; n < chirpLength; ++n)
+    {
+        float t = (float)n / (float)sampleRate;
+        float phase = 2.0f * M_PI * startFreq * K * (std::exp(t / K) - 1.0f);
+        chirp[n] = std::sin(phase);
+    }
 }
 
 void Convolver::setEnable(bool enable)
@@ -321,7 +351,7 @@ void Convolver::normalizeVolume()
     // clear old memory with zeros
     fir_fft_ols.clearBuffers();
     
-    for (uint32_t i = 0u; i < CHIRP_LENGTH; i++)
+    for (uint32_t i = 0u; i < chirpLength; i++)
     {
         signal = fir_fft_ols.process(chirp[i]);
 
