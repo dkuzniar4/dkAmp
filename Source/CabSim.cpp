@@ -237,9 +237,9 @@ Convolver::~Convolver()
 
 float Convolver::process(float input)
 {
-    if (IR_loaded == true && reinitFlag == false)
+    if (enable == true)
     {
-        if (enable == true)
+        if (IR_loaded == true && reinitFlag == false)
         {
             if (normEnable)
             {
@@ -257,8 +257,8 @@ float Convolver::process(float input)
     }
     else
     {
-        return 0.0f;
-    }
+        return input;
+    } 
 }
 
 void Convolver::loadIR(const juce::File& file)

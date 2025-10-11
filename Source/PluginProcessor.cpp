@@ -25,7 +25,7 @@ DkAmpAudioProcessor::DkAmpAudioProcessor()
 {
 #if LOGGER_ENABLE
     auto logFile = juce::File::getSpecialLocation((juce::File::userHomeDirectory))
-        .getChildFile("myLogs.txt");
+        .getChildFile("dkAmpLogs.txt");
 
 
             logger.reset(juce::FileLogger::createDefaultAppLogger(
