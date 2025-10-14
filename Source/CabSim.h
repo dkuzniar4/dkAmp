@@ -80,6 +80,7 @@ public:
     void normalizeVolume();
 
     bool IR_loaded = false;
+    bool IR_reloadFlag = false;
     uint32_t IR_len = 0;
 
 private:

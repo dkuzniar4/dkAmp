@@ -241,13 +241,20 @@ float Convolver::process(float input)
     {
         if (IR_loaded == true && reinitFlag == false)
         {
-            if (normEnable)
+            if (IR_reloadFlag == false)
             {
-                return fir_fft_ols.process(input) * normFactor;
+                if (normEnable)
+                {
+                    return fir_fft_ols.process(input) * normFactor;
+                }
+                else
+                {
+                    return fir_fft_ols.process(input);
+                }
             }
             else
             {
-                return fir_fft_ols.process(input);
+                return 0.0f;
             }
         }
         else
@@ -263,7 +270,8 @@ float Convolver::process(float input)
 
 void Convolver::loadIR(const juce::File& file)
 {
-    IR_loaded = false;
+    /*IR_loaded = false;*/
+    IR_reloadFlag = true;
     IR_loader.loadWavFile(file);
 
     uint32_t IR_length;
@@ -292,6 +300,7 @@ void Convolver::loadIR(const juce::File& file)
 
     normalizeVolume();
 
+    IR_reloadFlag = false;
     IR_loaded = true;
 }
 
