@@ -16,7 +16,9 @@ public:
 
 private:
     void updateToneFilter();
+    void updateDCBlocker();
     float toneFilter(float x);
+    float DC_blocker(float x);
 
     float inputGain;
     float bias;
@@ -25,5 +27,12 @@ private:
     float sampleRate;
 
     // LPF 1 order
-    float a0, b1, z1;
+    float a0 = 0.0f;
+    float b1 = 0.0f;
+    float z1 = 0.0f;
+
+    // DC blocker
+    float dc_x1 = 0.0f;
+    float dc_y1 = 0.0f;
+    float dc_R = 0.0f;
 };

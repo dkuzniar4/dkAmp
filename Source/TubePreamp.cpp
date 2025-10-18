@@ -13,13 +13,11 @@ TubePreamp::TubePreamp()
     bias = 0.0f;
     outputGain = 1.0f;
     toneCutoff = 5000.0f; // dafault 5 kHz
-    sampleRate = 44100.0f;
+    sampleRate = 48000.0f;
 
-    a0 = 0.0f;
-    b1 = 0.0f;
-    z1 = 0.0f;
 
     updateToneFilter();
+    updateDCBlocker();
 }
 
 // --- Params setting ---
@@ -27,6 +25,7 @@ void TubePreamp::setSampleRate(float sr)
 {
     sampleRate = sr;
     updateToneFilter();
+    updateDCBlocker();
 }
 
 void TubePreamp::setGain(float g)
@@ -55,20 +54,37 @@ void TubePreamp::setTone(float cutoffHz)
     updateToneFilter();
 }
 
+void TubePreamp::updateDCBlocker()
+{
+    float dcCutoff = 10.0f; // 10 Hz
+    dc_R = std::exp(-2.0f * static_cast<float>(M_PI) * dcCutoff / sampleRate);
+}
+
+float TubePreamp::DC_blocker(float x)
+{
+    float dcOut = x - dc_x1 + dc_R * dc_y1;
+    dc_x1 = x;
+    dc_y1 = dcOut;
+
+    return dcOut;
+}
 
 float TubePreamp::process(float input)
 {
     // Input inputGain + bias
-    float x = inputGain * input + bias;
+    float signal = inputGain * input + bias;
 
     // tube nonlinearity
-    float nonlinear = std::tanh(0.8f * x);
+    signal = std::tanh(0.8f * signal);
 
     // LPF
-    float filtered = toneFilter(nonlinear);
+    signal = toneFilter(signal);
+
+    // HPF
+    signal = DC_blocker(signal);
 
     // output
-    return outputGain * filtered;
+    return outputGain * signal;
 }
 
 // --- LPF 1 order ---
